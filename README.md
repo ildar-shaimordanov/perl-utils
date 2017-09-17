@@ -44,8 +44,8 @@ functionality and flexibility.
 
 **Example**
 
-Each log entry begins with the timestamp in the generalized form *date 
-time*, which can be covered by the pattern `\d+/\d+/\d+ \d+:\d+:\d+` 
+Each log entry in log files usually begins with the timestamp in the 
+generalized numeric form *date time*, which can be covered by the pattern 
 without reflecting on which date format has been used to output dates:
 
 ```bash
