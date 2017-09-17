@@ -1,0 +1,256 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+paragrep - grep-like filter for searching matches in paragraphs
+
+=head1 SYNOPSIS
+
+    paragrep --help
+    paragrep OPTIONS
+
+=head1 DESCRIPTION
+
+paragrep assumes the input consists of paragraphs and prints the 
+paragraphs matching a pattern. Paragraph is identified as a block of text 
+delimited by an empty or blank lines. 
+
+=head1 OPTIONS
+
+=head2 Generic Program Information
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Print this help message and exit.
+
+=item B<--version>
+
+Print the program version and exit.
+
+=item B<--debug>
+
+Print debug information to STDERR.
+
+=back
+
+=head2 Paragraph Matching Control
+
+=over 4
+
+=item B<-p> I<PATTERN>, B<--break-of-paragraph=>I<PATTERN>
+
+Use I<PATTERN> as the pattern to identify the break of paragraphs. By 
+default, this value is C<^\s*$>. The break of paragraphs is considered as 
+a separator and excluded from the output.
+
+=item B<-P>, B<--begin-of-paragraph>
+
+If this option is specified in the command line, the meaning of the option 
+B<-p> is modified to identify the first line of the paragraph which is 
+considered as the part of a paragraph.
+
+=back
+
+=head2 Matching Control
+
+=over 4
+
+=item B<-e> I<PATTERN>, B<--regexp=>I<PATTERN>
+
+Use I<PATTERN> as the pattern. This can be used to specify multiple search 
+patterns, or to protect a pattern beginning with a hyphen (I<->). 
+
+This option can be specified multiple times or omitted for briefness. 
+
+=item B<-i>, B<--ignore-case>
+
+Ignore case distinctions in both the I<PATTERN> and the input files. 
+
+=item B<-v>, B<--invert-match>
+
+Invert the sense of matching, to select non-matching paragraphs.
+
+=item B<-w>, B<--word-regexp>
+
+Select only those paragraphs containing matches that form whole words. The 
+test is that the matching substring must either be at the beginning of the 
+line of each paragraphs, or preceded by a non-word constituent character. 
+Similarly, it must be either at the end of the line of each paragraphs or 
+followed by a non-word constituent character. Word-constituent characters 
+are letters, digits, and the underscore. 
+
+=back
+
+=head1 EXAMPLES
+
+The following example demonstrates the customized paragraph definition for 
+parsing log files. Usually, applications producing log files write one log 
+entry per one line. Somethimes applications (especially written in Java) 
+produce multiline log entries. Each log entry begins with the timestamp in 
+the generalized form C<date time>, which can be covered by the pattern 
+C<\d+/\d+/\d+ \d+:\d+:\d+> without reflecting on which date format has 
+been used to output dates:
+
+    paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
+
+=head1 SEE ALSO
+
+grep(1)
+
+perlre(1)
+
+=head1 COPYRIGHT
+
+Copyright 2017 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
+
+This program is free software; you can redistribute it and/or modify it 
+under the same terms as Perl itself.
+
+=cut
+
+# =========================================================================
+
+use strict;
+use warnings;
+
+no warnings "utf8";
+use open qw( :std :utf8 );
+
+use Pod::Usage;
+use Getopt::Long qw( :config no_ignore_case bundling auto_version );
+
+our $VERSION = "0.1";
+
+my $debug = 0;
+my $verbose = 0;
+
+my $break_of_para = '^\\s*$';
+my $begin_of_para = 0;
+
+my $ignore_case = 0;
+my $invert_match = 0;
+my $word_regexp = 0;
+
+my @patterns = ();
+my $match_pattern;
+
+my @globs = ();
+my @files = ();
+
+# =========================================================================
+
+pod2usage unless GetOptions(
+	"h|help" => sub {
+		pod2usage({
+			-verbose => 2, 
+			-noperldoc => 0, 
+		});
+	}, 
+
+	"debug" => \$debug, 
+
+	"p|break-of-paragraph=s" => \$break_of_para, 
+	"P|begin-of-paragraph" => \$begin_of_para, 
+
+	"e|regexp=s" => \@patterns, 
+
+	"i|ignore-case" => \$ignore_case, 
+	"v|invert-match" => \$invert_match, 
+	"w|word-regexp" => \$word_regexp, 
+
+	"<>" => sub {
+		push @globs, $_[0];
+	}, 
+);
+
+# =========================================================================
+
+sub validate_re {
+	my ( $v, $k, $ignore_case, $word_regexp ) = ( shift, shift || "<anon>", shift, shift );
+	$v = "\\b($v)\\b" if $word_regexp;
+	my $re = eval { $ignore_case ? qr/$v/im : qr/$v/m };
+	die "Bad regexp: $k = $v\n" if $@;
+	$re;
+}
+
+# If no patterns, assume the first item of the list is the pattern
+push @patterns, shift @globs if ! @patterns && @globs;
+
+# Validate all the patterns before combining into the single one
+pod2usage unless @patterns;
+map { validate_re $_, "pattern", $ignore_case } @patterns;
+
+# Combine all patterns into the single pattern
+$match_pattern = validate_re join("|", @patterns), "", $ignore_case, $word_regexp;
+
+# Expand filename patterns
+@files = map { glob } @globs;
+
+# If the list of files is empty, assume reading from STDIN
+push @files, "-" unless @files;
+
+# Validate and setup the pattern identifying paragraphs
+$break_of_para = validate_re $break_of_para, "break-of-paragraph";
+
+# =========================================================================
+
+warn <<DATA if $debug;
+PARAGRAPH MATCHING CONTROL
+    break-of-paragraph = $break_of_para
+    begin-of-paragraph = $begin_of_para
+
+MATCHING CONTROL
+    match-pattern = $match_pattern
+    invert-match  = $invert_match
+
+FILES
+    @files
+DATA
+
+# =========================================================================
+
+my $para;
+
+sub print_para {
+	print $para if defined $para && ( $para =~ m/$match_pattern/ ^ $invert_match );
+	$para = "";
+}
+
+sub grep_file {
+	my $file = shift;
+
+	if ( $file eq "-" ) {
+		*FILE = *STDIN;
+	} else {
+		if ( -d $file ) {
+			warn "Not a file: $file\n";
+			return;
+		}
+		open FILE, $file or do {
+			warn "Unable to read file: $file\n";
+			return;
+		};
+	}
+
+	while ( <FILE> ) {
+		if ( m/$break_of_para/ ) {
+			print_para;
+			next unless $begin_of_para;
+		};
+		$para .= $_;
+	}
+
+	print_para if $para;
+
+	close FILE unless $file eq "-";
+}
+
+# =========================================================================
+
+grep_file $_ foreach ( @files );
+
+# =========================================================================
+
+# EOF
