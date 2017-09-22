@@ -1,3 +1,5 @@
+paragrep/paragrep linguist-language=Perl
+
 * text=crlf
 
 *.bat text
