@@ -16,6 +16,44 @@ other log entries not necessary at the moment).
 
 # Utilities
 
+## `sponge`
+
+sponge is Perl version of the sponge from the Debian package moreutils. 
+
+It reads standard input to memory and writes it out to the specified file. 
+Unlike a shell redirect, the script soaks up all its input before opening 
+the output file. This allows constructing pipelines that read from and 
+write to the same file. If no file is specified, outputs to STDOUT. 
+
+My first release was the Perl inline script within the shell function:
+
+```bash
+sponge() {
+	perl -ne '
+	push @lines, $_;
+	END {
+		open(OUT, ">$file") or die "sponge: cannot open $file: $!\n";
+		print OUT @lines;
+		close(OUT); }
+	' -s -- -file="$1"
+}
+```
+
+**Example**
+
+An abstract example of usage is described in the tool's help and shown 
+below:
+
+```bash
+sed '...' file | grep '...' | sponge [-a] file
+```
+
+**See also**
+
+* http://joeyh.name/code/moreutils/
+
+* http://backreference.org/2011/01/29/in-place-editing-of-files/
+
 ## `paragrep`
 
 paragrep - grep-like filter for searching matches in paragraphs. 
