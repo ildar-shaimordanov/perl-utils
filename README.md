@@ -1,7 +1,7 @@
 
 # Preamble
 
-**para-utils** is the set of text-oriented utilities for processing 
+**perl-utils** is the set of text-oriented utilities mostly for processing 
 paragraphs. By default, a paragraph is idenitified as a bunch of text 
 lines delimited by an empty or blank lines. 
 
