@@ -1,4 +1,4 @@
-paragrep/paragrep linguist-language=Perl
+perl/* linguist-language=Perl
 
 * text=crlf
 
