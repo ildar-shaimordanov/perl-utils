@@ -121,7 +121,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.1";
+our $VERSION = "0.2";
 
 my $debug = 0;
 my $verbose = 0;
