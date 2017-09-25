@@ -14,45 +14,7 @@ useful information. Using `grep -C` (or `grep -A`, or `grep -B`) doesn't
 guarantee complete extraction of particular log entries (or can extract 
 other log entries not necessary at the moment). 
 
-# Utilities
-
-## `sponge`
-
-sponge is Perl version of the sponge from the Debian package moreutils. 
-
-It reads standard input to memory and writes it out to the specified file. 
-Unlike a shell redirect, the script soaks up all its input before opening 
-the output file. This allows constructing pipelines that read from and 
-write to the same file. If no file is specified, outputs to STDOUT. 
-
-My first release was the Perl inline script within the shell function:
-
-```bash
-sponge() {
-	perl -ne '
-	push @lines, $_;
-	END {
-		open(OUT, ">$file") or die "sponge: cannot open $file: $!\n";
-		print OUT @lines;
-		close(OUT); }
-	' -s -- -file="$1"
-}
-```
-
-**Example**
-
-An abstract example of usage is described in the tool's help and shown 
-below:
-
-```bash
-sed '...' file | grep '...' | sponge [-a] file
-```
-
-**See also**
-
-* http://joeyh.name/code/moreutils/
-
-* http://backreference.org/2011/01/29/in-place-editing-of-files/
+# Paragraph processing Utilities
 
 ## `paragrep`
 
@@ -107,5 +69,78 @@ entries appear in the correct chronological order without breaks of log
 entries. 
 
 * https://github.com/ildar-shaimordanov/logmerge
+
+# Other utilities
+
+## `sponge`
+
+sponge is Perl version of the sponge from the Debian package moreutils. 
+
+It reads standard input to memory and writes it out to the specified file. 
+Unlike a shell redirect, the script soaks up all its input before opening 
+the output file. This allows constructing pipelines that read from and 
+write to the same file. If no file is specified, outputs to STDOUT. 
+
+My first release was the Perl inline script within the shell function:
+
+```bash
+sponge() {
+	perl -ne '
+	push @lines, $_;
+	END {
+		open(OUT, ">$file") or die "sponge: cannot open $file: $!\n";
+		print OUT @lines;
+		close(OUT); }
+	' -s -- -file="$1"
+}
+```
+
+**Example**
+
+An abstract example of usage is described in the tool's help and shown 
+below:
+
+```bash
+sed '...' file | grep '...' | sponge [-a] file
+```
+
+**See also**
+
+* http://joeyh.name/code/moreutils/
+
+* http://backreference.org/2011/01/29/in-place-editing-of-files/
+
+## `transpose`
+
+This is port of the AWK script 
+
+```awk
+#!/usr/bin/awk -f
+
+{
+	for (i = 1; i <= NF; i++) {
+		a[NR,i] = $i
+	}
+}
+
+NF > p {
+	p = NF
+}
+
+END {
+	for (j = 1; j <= p; j++) {
+		str = a[1,j]
+		for (i = 2; i <= NR; i++) {
+			str = str OFS a[i,j];
+		}
+		print str
+	}
+}
+```
+
+borrowed from this link https://stackoverflow.com/q/1729824/3627676.
+
+It transposes the input file so rows become columns and columns become 
+rows.
 
 # To be continued...
