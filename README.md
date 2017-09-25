@@ -30,11 +30,14 @@ function invoking perl inline script for grepping log files:
 ```bash
 paragrep() {
 	perl -ne '
-	if ( m/$begin_of_para/ ) {
-		print $line if defined $line && $line =~ /$match_pattern/;
-		$line = "";
+	if ( m/$break_of_para/ ) {
+		print $para if defined $para && $para =~ /$match_pattern/;
+		$para = "";
 	}
-	$line .= $_;
+	$para .= $_;
+	END {
+		print $para if defined $para && $para =~ /$match_pattern/;
+	}
 	' -s -- -begin_of_para="$1" -match_pattern="$2" "${@:3}"
 }
 ```
