@@ -65,6 +65,7 @@ The output record separator. The default value is newline.
 perlre(1)
 
 L<https://stackoverflow.com/q/1729824/3627676>
+L<http://www.perlmonks.org/?node_id=1162532>
 
 =head1 COPYRIGHT
 
