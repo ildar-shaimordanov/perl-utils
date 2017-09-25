@@ -38,7 +38,7 @@ paragrep() {
 	END {
 		print $para if defined $para && $para =~ /$match_pattern/;
 	}
-	' -s -- -begin_of_para="$1" -match_pattern="$2" "${@:3}"
+	' -s -- -break_of_para="$1" -match_pattern="$2" "${@:3}"
 }
 ```
 
