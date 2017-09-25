@@ -107,12 +107,12 @@ sed '...' file | grep '...' | sponge [-a] file
 **See also**
 
 * http://joeyh.name/code/moreutils/
-
 * http://backreference.org/2011/01/29/in-place-editing-of-files/
 
 ## `transpose`
 
-This is port of the AWK script 
+This is Perl implementation of the AWK script to transposes the input file 
+so rows become columns and columns become rows. 
 
 ```awk
 #!/usr/bin/awk -f
@@ -138,9 +138,15 @@ END {
 }
 ```
 
-borrowed from this link https://stackoverflow.com/q/1729824/3627676.
+**Example**
 
-It transposes the input file so rows become columns and columns become 
-rows.
+```bash
+( echo {1..5} ; echo {100..104} ) | ./transpose
+```
+
+**See also**
+
+* https://stackoverflow.com/q/1729824/3627676
+* http://www.perlmonks.org/?node_id=1162532
 
 # To be continued...
