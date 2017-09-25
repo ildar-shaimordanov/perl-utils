@@ -14,7 +14,7 @@ useful information. Using `grep -C` (or `grep -A`, or `grep -B`) doesn't
 guarantee complete extraction of particular log entries (or can extract 
 other log entries not necessary at the moment). 
 
-# Paragraph processing Utilities
+# Paragraph processing utilities
 
 ## `paragrep`
 
@@ -111,7 +111,7 @@ sed '...' file | grep '...' | sponge [-a] file
 
 ## `transpose`
 
-This is Perl implementation of the AWK script to transposes the input file 
+This is Perl implementation of the AWK script to transpose the input file 
 so rows become columns and columns become rows. 
 
 ```awk
