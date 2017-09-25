@@ -8,6 +8,15 @@ sponge - soak up standard input and write to a file
 
     sed '...' file | grep '...' | sponge [-a] file
 
+=head1 DESCRIPTION
+
+sponge is Perl version of the sponge from the Debian package moreutils. 
+
+It reads standard input to memory and writes it out to the specified file. 
+Unlike a shell redirect, the script soaks up all its input before opening 
+the output file. This allows constructing pipelines that read from and 
+write to the same file. If no file is specified, outputs to STDOUT. 
+
 =head1 OPTIONS
 
 =over 4
@@ -21,15 +30,6 @@ Print the program version and exit.
 Append to the file.
 
 =back
-
-=head1 DESCRIPTION
-
-sponge is Perl version of the sponge from the Debian package moreutils. 
-
-It reads standard input to memory and writes it out to the specified file. 
-Unlike a shell redirect, the script soaks up all its input before opening 
-the output file. This allows constructing pipelines that read from and 
-write to the same file. If no file is specified, outputs to STDOUT. 
 
 =head1 SEE ALSO
 
