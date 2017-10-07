@@ -91,10 +91,27 @@ sponge() {
 	perl -ne '
 	push @lines, $_;
 	END {
-		open(OUT, ">$file") or die "sponge: cannot open $file: $!\n";
+		open(OUT, ">$file")
+		or die "sponge: cannot open $file: $!\n";
 		print OUT @lines;
-		close(OUT); }
+		close(OUT);
+	}
 	' -s -- -file="$1"
+}
+```
+
+Perl has many ways to do it. So, there is a bit another way also supporting the `-a` option for appending to the file:
+
+```bash
+sponge() {
+	perl -e '
+	$file = shift || "-";
+	@lines = <>;
+	open OUT, ( defined $a ? ">>" : ">" ) . $file
+	or die "sponge: cannot open $file: $!\n";
+	print OUT @lines;
+	close OUT;
+	' -s -- "$@"
 }
 ```
 
