@@ -48,9 +48,9 @@ been specified.
 
 =item B<--ltrim>, B<--rtrim>, B<--trim>
 
-Remove spaces on left, right or both sides of a line.
+Remove field separators on left, right or both sides of an input line.
 
-=item B<-t> I<PATTERN>, B<--output-field-separator=>I<PATTERN>
+=item B<-f> I<PATTERN>, B<--output-field-separator=>I<PATTERN>
 
 The output field separator. The default value is space.
 
@@ -116,7 +116,7 @@ pod2usage unless GetOptions(
 	"rtrim" => \$cfg{rtrim}, 
 	"trim" => sub { $cfg{ltrim} = $cfg{rtrim} = 1; }, 
 
-	"t|output-field-separator=s" => sub {
+	"f|output-field-separator=s" => sub {
 		$cfg{ofs} = eval '"' . $_[1] . '"';
 	}, 
 	"r|output-record-separator=s" => sub {
