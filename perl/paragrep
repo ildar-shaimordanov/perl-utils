@@ -29,10 +29,6 @@ Print this help message and exit.
 
 Print the program version and exit.
 
-=item B<--debug>
-
-Print debug information to STDERR.
-
 =back
 
 =head2 Paragraph Matching Control
@@ -149,8 +145,6 @@ pod2usage unless GetOptions(
 		});
 	}, 
 
-	"debug" => \$debug, 
-
 	"p|break-of-paragraph=s" => \$break_of_para, 
 	"P|begin-of-paragraph" => \$begin_of_para, 
 
@@ -196,7 +190,7 @@ $break_of_para = validate_re $break_of_para, "break-of-paragraph";
 
 # =========================================================================
 
-warn <<DATA if $debug;
+warn <<DATA if $ENV{DEBUG};
 PARAGRAPH MATCHING CONTROL
     break-of-paragraph = $break_of_para
     begin-of-paragraph = $begin_of_para
