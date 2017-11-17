@@ -205,6 +205,50 @@ DATA
 
 # =========================================================================
 
+# There are two main reasons why I entered these functions here:
+# -- support older Perl instances (at least 5.16 and earlier)
+# -- avoid extra dependencies on other external modules
+#
+# The functions are parts of the core module List::Util since 1.33. Also 
+# they are parts of the external module List::MoreUtils for long time. 
+#
+# The implementation of the functions below were borrowed from the source 
+# code of List::MoreUtils with minimal cosmetic changes. 
+
+sub any(&@) {
+	my $f = shift;
+	foreach (@_) {
+		return 1 if $f->();
+	}
+	return 0;
+}
+
+sub all(&@) {
+	my $f = shift;
+	foreach (@_) {
+		return 0 unless $f->();
+	}
+	return 1;
+}
+
+sub none(&@) {
+	my $f = shift;
+	foreach (@_) {
+		return 0 if $f->();
+	}
+	return 1;
+}
+
+sub notall(&@) {
+	my $f = shift;
+	foreach (@_) {
+		return 1 unless $f->();
+	}
+	return 0;
+}
+
+# =========================================================================
+
 my $para;
 
 sub print_para {
