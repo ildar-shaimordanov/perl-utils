@@ -196,6 +196,8 @@ PARAGRAPH MATCHING CONTROL
     begin-of-paragraph = $begin_of_para
 
 MATCHING CONTROL
+    ignore-case   = $ignore_case
+    word-regexp   = $word_regexp
     match-pattern = $match_pattern
     invert-match  = $invert_match
 
