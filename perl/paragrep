@@ -130,7 +130,7 @@ my $invert_match = 0;
 my $word_regexp = 0;
 
 my @patterns = ();
-my $match_pattern;
+my @regexps;
 
 my @globs = ();
 my @files = ();
@@ -172,12 +172,9 @@ sub validate_re {
 # If no patterns, assume the first item of the list is the pattern
 push @patterns, shift @globs if ! @patterns && @globs;
 
-# Validate all the patterns before combining into the single one
+# Validate all the patterns and create the valid regexps
 pod2usage unless @patterns;
-map { validate_re $_, "pattern", $ignore_case } @patterns;
-
-# Combine all patterns into the single pattern
-$match_pattern = validate_re join("|", @patterns), "", $ignore_case, $word_regexp;
+@regexps = map { validate_re $_, "pattern", $ignore_case, $word_regexp } @patterns;
 
 # Expand filename patterns
 @files = map { glob } @globs;
@@ -198,8 +195,8 @@ PARAGRAPH MATCHING CONTROL
 MATCHING CONTROL
     ignore-case   = $ignore_case
     word-regexp   = $word_regexp
-    match-pattern = $match_pattern
     invert-match  = $invert_match
+    regexps       = @regexps
 
 FILES
     @files
@@ -251,10 +248,12 @@ sub notall(&@) {
 
 # =========================================================================
 
+my $matcher = $invert_match ? \&none : \&any;
+
 my $para;
 
 sub print_para {
-	print $para if defined $para && ( $para =~ m/$match_pattern/ ^ $invert_match );
+	print $para if defined $para && &$matcher(sub { $para =~ $_ }, @regexps);
 	$para = "";
 }
 
