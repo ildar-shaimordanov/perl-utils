@@ -77,6 +77,18 @@ Similarly, it must be either at the end of the line of each paragraphs or
 followed by a non-word constituent character. Word-constituent characters 
 are letters, digits, and the underscore. 
 
+=item B<-A>, B<--and>
+
+=item B<-O>, B<--or>
+
+These options specify whether multiple search patterns specified by the 
+I<-e> options should be logically I<AND>ed together or logically I<OR>ed 
+together. If not specified, the patterns are assumed logically I<OR>ed. 
+
+These options can be used to simplify the commands searching for matches 
+to multiple patterns. More than one of them can be specified but the only 
+last pattern has affect. 
+
 =back
 
 =head1 EXAMPLES
@@ -90,6 +102,13 @@ C<\d+/\d+/\d+ \d+:\d+:\d+> without reflecting on which date format has
 been used to output dates:
 
     paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
+
+The following example shows how the combining option simplifies usage. The 
+resulting output will consist of the paragraphs matching both I<PATTERN1> 
+and I<PATTERN2>. 
+
+    cat FILENAME | paragrep -e PATTERN1 -e PATTERN2 -A
+    cat FILENAME | paragrep -e PATTERN1 | paragrep -e PATTERN2
 
 =head1 SEE ALSO
 
@@ -128,6 +147,7 @@ my $begin_of_para = 0;
 my $ignore_case = 0;
 my $invert_match = 0;
 my $word_regexp = 0;
+my $regexp_anded = 0;
 
 my @patterns = ();
 my @regexps;
@@ -153,6 +173,9 @@ pod2usage unless GetOptions(
 	"i|ignore-case" => \$ignore_case, 
 	"v|invert-match" => \$invert_match, 
 	"w|word-regexp" => \$word_regexp, 
+
+	"A|and" => sub { $regexp_anded = 1; }, 
+	"O|or" => sub { $regexp_anded = 0; }, 
 
 	"<>" => sub {
 		push @globs, $_[0];
@@ -196,6 +219,7 @@ MATCHING CONTROL
     ignore-case   = $ignore_case
     word-regexp   = $word_regexp
     invert-match  = $invert_match
+    regexp_anded  = $regexp_anded
     regexps       = @regexps
 
 FILES
@@ -248,7 +272,9 @@ sub notall(&@) {
 
 # =========================================================================
 
-my $matcher = $invert_match ? \&none : \&any;
+my $matcher = $regexp_anded 
+	? ( $invert_match ? \&notall : \&all ) 
+	: ( $invert_match ? \&none : \&any );
 
 my $para;
 
