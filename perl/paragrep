@@ -103,6 +103,11 @@ been used to output dates:
 
     paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
 
+The example below demonstrates how C<paragrep> can imitate behaviour of 
+the standard C<grep>:
+
+    paragrep -Pp '\n' PATTERN FILENAME
+
 The following example shows how the combining option simplifies usage. The 
 resulting output will consist of the paragraphs matching both I<PATTERN1> 
 and I<PATTERN2>. 
@@ -136,7 +141,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.4";
+our $VERSION = "0.4.1";
 
 my $debug = 0;
 my $verbose = 0;
