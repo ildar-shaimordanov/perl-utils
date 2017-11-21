@@ -145,7 +145,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.5";
+our $VERSION = "0.5.1";
 
 my $debug = 0;
 my $verbose = 0;
@@ -196,7 +196,7 @@ pod2usage unless GetOptions(
 # =========================================================================
 
 sub validate_re {
-	my ( $v, $k, $ignore_case, $word_regexp ) = ( shift, shift || "<anon>", shift, shift );
+	my ( $v, $k, $ignore_case, $word_regexp ) = @_;
 	$v = "\\b($v)\\b" if $word_regexp;
 	my $re = eval { $ignore_case ? qr/$v/im : qr/$v/m };
 	die "Bad regexp: $k = $v\n" if $@;
@@ -300,19 +300,17 @@ sub print_para {
 	$para = "";
 }
 
-sub grep_file {
-	my $file = shift;
-
+foreach my $file ( @files ) {
 	if ( $file eq "-" ) {
 		*FILE = *STDIN;
 	} else {
 		if ( -d $file ) {
 			warn "Not a file: $file\n";
-			return;
+			next;
 		}
 		open FILE, $file or do {
 			warn "Unable to read file: $file\n";
-			return;
+			next;
 		};
 	}
 
@@ -328,10 +326,6 @@ sub grep_file {
 
 	close FILE unless $file eq "-";
 }
-
-# =========================================================================
-
-grep_file $_ foreach ( @files );
 
 # =========================================================================
 
