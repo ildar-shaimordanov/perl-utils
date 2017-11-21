@@ -60,6 +60,10 @@ patterns, or to protect a pattern beginning with a hyphen (I<->).
 
 This option can be specified multiple times or omitted for briefness. 
 
+=item B<-f> I<FILE>, B<--file=>I<FILE>
+
+Obtain patterns from I<FILE>, one per line.
+
 =item B<-i>, B<--ignore-case>
 
 Ignore case distinctions in both the I<PATTERN> and the input files. 
@@ -141,7 +145,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.4.1";
+our $VERSION = "0.5";
 
 my $debug = 0;
 my $verbose = 0;
@@ -155,6 +159,7 @@ my $word_regexp = 0;
 my $regexp_anded = 0;
 
 my @patterns = ();
+my @patterns_files = ();
 my @regexps;
 
 my @globs = ();
@@ -174,6 +179,7 @@ pod2usage unless GetOptions(
 	"P|begin-of-paragraph" => \$begin_of_para, 
 
 	"e|regexp=s" => \@patterns, 
+	"f|file=s" => \@patterns_files,
 
 	"i|ignore-case" => \$ignore_case, 
 	"v|invert-match" => \$invert_match, 
@@ -195,6 +201,12 @@ sub validate_re {
 	my $re = eval { $ignore_case ? qr/$v/im : qr/$v/m };
 	die "Bad regexp: $k = $v\n" if $@;
 	$re;
+}
+
+foreach my $file ( @patterns_files ) {
+	open FILE, $file or die "Unable to open file: $file\n";
+	push @patterns, map { chomp; $_ } <FILE>;
+	close FILE;
 }
 
 # If no patterns, assume the first item of the list is the pattern
