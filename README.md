@@ -64,6 +64,7 @@ and it is flexible, powerful, richful and fast scripting language in Unix.
 
 * https://github.com/bmc/paragrep
 * https://github.com/rrnewton/paragrep
+* [Example from Perl Cookbook, Chapter 6](https://resources.oreilly.com/examples/9780596003135/blob/master/cookbook.examples/ch06/paragrep)
 
 ## `logmerge`
 
