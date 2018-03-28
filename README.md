@@ -55,6 +55,13 @@ without reflecting on which date format has been used to output dates:
 paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
 ```
 
+Also the aliases for parsing log files and INI-like configuration files:
+
+```bash
+alias lgrep="paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+'"
+alias cgrep="paragrep -Pp '^(#@ |#-> )?\['"
+```
+
 **Similar tools**
 
 While working on the script I found two interesting implementations of the 
