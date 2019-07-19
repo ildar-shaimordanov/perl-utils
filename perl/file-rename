@@ -6,7 +6,7 @@ file-rename - rename multiple files
 
 =head1 SYNOPSIS
 
-  file-rename [OPTIONS] [-e|-E CODE]|CODE [FILES]
+  file-rename [OPTIONS] [-e|-E CODE]*|CODE [FILES]
 
 =head1 DESCRIPTION
 
@@ -25,13 +25,13 @@ the command line, filenames will be read via standard input.
 
 Outputs this help page.
 
-=item B<-e> I<CODE>, B<-E> I<CODE>, B<--expr>=I<CODE>
+=item B<-e> I<EXPRESSION>, B<-E> I<EXPRESSION>, B<--expr>=I<EXPRESSION>
 
 The code to be executed on filenames.
 
 =item B<-v>, B<--verbose>
 
-Be verbosely.
+Be verbose.
 
 =item B<-n>, B<--dry-run>
 
@@ -77,11 +77,11 @@ Ildar Shaimordanov
 
 =head1 COPYRIGHT
 
-Larry Wall
+Copyright by Larry Wall
 
-Robin Barker
+Copyright 2018 by Robin Barker
 
-Copyright 2019 Ildar Shaimordanov. All rights reserved. 
+Copyright 2019 by Ildar Shaimordanov
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -107,7 +107,7 @@ my $action = "move";
 my $filename_only;
 my $null;
 
-my $code;
+my @expr;
 
 exit 1 unless GetOptions(
 	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
@@ -119,13 +119,14 @@ exit 1 unless GetOptions(
 	"N|filename-only"	=> \$filename_only,
 	"z|0|null"		=> \$null,
 
-	"e|E|expr=s"		=> \$code,
+	"e|E|expr=s@"		=> \@expr,
 );
 
 # =========================================================================
 
-$code = shift unless defined $code;
-pod2usage unless $code;
+push @expr, shift unless @expr;
+
+my $code = join ";", @expr or pod2usage;
 
 my $eval = eval sprintf "sub {\n#line 1\n%s\n}", $code or die $@;
 
