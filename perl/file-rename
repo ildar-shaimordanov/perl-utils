@@ -64,6 +64,8 @@ cp(1)
 
 L<https://metacpan.org/pod/rename>
 
+L<https://metacpan.org/pod/distribution/App-RenameUtils/script/rename-swap>
+
 =head1 AUTHORS
 
 This work is attempt to rethink the already existing script, rework the
