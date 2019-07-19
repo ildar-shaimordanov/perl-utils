@@ -177,4 +177,18 @@ END {
 * https://stackoverflow.com/q/1729824/3627676
 * http://www.perlmonks.org/?node_id=1162532
 
+## `file-rename`
+
+`file-rename` renames the filenames supplied according to the rule specified as the first argument.
+
+**Example**
+
+```bash
+file-rename 's/\.bak$//' *.bak
+```
+
+**See Also**
+
+* https://metacpan.org/pod/rename
+
 # To be continued...
