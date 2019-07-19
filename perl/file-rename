@@ -1,0 +1,170 @@
+#!/usr/bin/env perl
+
+=head1 NAME
+
+file-rename - rename multiple files
+
+=head1 SYNOPSIS
+
+  file-rename [OPTIONS] [-e|-E CODE]|CODE [FILES]
+
+=head1 DESCRIPTION
+
+C<file-rename> renames the filenames supplied according to the rule
+specified as the first argument. The perlexpr argument is a Perl
+expression which is expected to modify the $_ string in Perl for at least
+some of the filenames specified. If a given filename is not modified
+by the expression, it will not be renamed. If no filenames are given on
+the command line, filenames will be read via standard input.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-h>, B<--help>
+
+Outputs this help page.
+
+=item B<-e> I<CODE>, B<-E> I<CODE>, B<--expr>=I<CODE>
+
+The code to be executed on filenames.
+
+=item B<-v>, B<--verbose>
+
+Be verbosely.
+
+=item B<-n>, B<--dry-run>
+
+Do nothing but print what can be done.
+
+=item B<-c>, B<--copy>
+
+Copy instead of move.
+
+=item B<-f>, B<--force>
+
+Overwrite existing files.
+
+=item B<-N>, B<--filename-only>
+
+Do not rename directories: only rename filename component of path.
+
+=item B<-z>, B<-0>, B<--null>
+
+Treat the input as a set of lines terminated by a zero byte C<\0>,
+instead of a newline.
+
+=back
+
+=head1 SEE ALSO
+
+mv(1)
+
+cp(1)
+
+L<https://metacpan.org/pod/rename>
+
+=head1 AUTHORS
+
+This work is attempt to rethink the already existing script, rework the
+code, extend (if it's possible) and make its usage more convenient.
+
+Larry Wall
+
+Robin Barker
+
+Ildar Shaimordanov
+
+=head1 COPYRIGHT
+
+Larry Wall
+
+Robin Barker
+
+Copyright 2019 Ildar Shaimordanov. All rights reserved. 
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
+# =========================================================================
+
+use strict;
+use warnings;
+
+use Getopt::Long qw(:config no_ignore_case bundling);
+use Pod::Usage;
+
+use File::Copy;
+
+# =========================================================================
+
+my $verbose;
+my $dry_run;
+my $force;
+my $action = "move";
+my $filename_only;
+my $null;
+
+my $code;
+
+exit 1 unless GetOptions(
+	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
+
+	"v|verbose"		=> \$verbose,
+	"n|dry-run"		=> sub { $dry_run = $verbose = 1; },
+	"c|copy"		=> sub { $action = "copy"; },
+	"f|force"		=> \$force,
+	"N|filename-only"	=> \$filename_only,
+	"z|0|null"		=> \$null,
+
+	"e|E|expr=s"		=> \$code,
+);
+
+# =========================================================================
+
+$code = shift unless defined $code;
+pod2usage unless $code;
+
+my $eval = eval sprintf "sub {\n#line 1\n%s\n}", $code or die $@;
+
+my $evaluate = ! $filename_only ? $eval : sub {
+	require File::Spec;
+	my ( $vol, $dir, $file ) = File::Spec->splitpath($_);
+	$eval->() for ( $file );
+	$_ = File::Spec->catpath($vol, $dir, $file);
+};
+
+# =========================================================================
+
+for ( -t 0 ? @ARGV : do {
+	warn "Reading from <stdin>\n";
+	local $/ = "\0" if $null;
+	chop( my @files = <STDIN> );
+	@files;
+} ) {
+	my $old = $_;
+
+	$evaluate->();
+
+	next if $old eq $_;
+
+	if ( -e $_ && ! $force ) {
+		warn "'$old' not renamed: '$_' already exists\n";
+		next;
+	}
+
+	$verbose and warn "$action '$old' '$_'\n";
+
+	next if $dry_run;
+
+	{
+		no strict 'refs';
+		$action->($old, $_) or warn "Cannot $action '$old' '$_': $!\n";
+	}
+}
+
+# =========================================================================
+
+# EOF
