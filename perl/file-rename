@@ -54,6 +54,46 @@ Do not rename directories: only rename filename component of path.
 Treat the input as a set of lines terminated by a zero byte C<\0>,
 instead of a newline.
 
+=item B<--rotate>=I<ROTATE-MODE>
+
+Rename files cyclically:
+
+=over 8
+
+=item I<left>
+
+Rename files rotating names left: C<S<< f1 <- f2 <- ... <- fn <- f1 >>>.
+
+=item I<right>
+
+Rename files rotating names right: C<S<< f1 -> f2 -> ... -> fn -> f1 >>>.
+
+=item I<swap>
+
+Rename files by swapping the closest names: C<S<< f1 <-> f2 f3 <-> f4 ... >>>.
+
+=item I<flip>
+
+Rename files by swapping the farthest names: C<S<< f1 <-> fn f2 <-> fn-1 ... >>>.
+
+=back
+
+=item B<-L>
+
+Synonym for B<--rotate>=I<left>.
+
+=item B<-R>
+
+Synonym for B<--rotate>=I<right>.
+
+=item B<-S>
+
+Synonym for B<--rotate>=I<swap>.
+
+=item B<-F>
+
+Synonym for B<--rotate>=I<flip>.
+
 =back
 
 =head1 SEE ALSO
@@ -62,9 +102,13 @@ mv(1)
 
 cp(1)
 
+perldoc -f rename
+
+perldoc File::Copy
+
 L<https://metacpan.org/pod/rename>
 
-L<https://metacpan.org/pod/distribution/App-RenameUtils/script/rename-swap>
+L<https://metacpan.org/pod/App::RenameUtils>
 
 =head1 AUTHORS
 
@@ -111,6 +155,8 @@ my $null;
 
 my @expr;
 
+my $rotate;
+
 exit 1 unless GetOptions(
 	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
 
@@ -122,7 +168,77 @@ exit 1 unless GetOptions(
 	"z|0|null"		=> \$null,
 
 	"e|E|expr=s@"		=> \@expr,
+
+	"L"		=> sub { $rotate = "left"; },
+	"R"		=> sub { $rotate = "right"; },
+	"S"		=> sub { $rotate = "swap"; },
+	"F"		=> sub { $rotate = "flip"; },
+	"rotate=s"	=> sub {
+		$rotate = $_[1];
+		$rotate =~ /^(left|right|swap|flip)$/ or die "Bad rotate mode: $rotate\n";
+	},
 );
+
+# =========================================================================
+
+$rotate and do {
+	# Make sure the files exist
+	for ( @ARGV ) {
+		die "'$_' not found\n" unless -e $_;
+	}
+
+	# Crate a temp filename that doesn't exist
+	my $tmp;
+	while ( 1 ) {
+		$tmp = sprintf "rotate-tmp-%d", rand() * 1_000_000;
+		last unless -e $tmp;
+	}
+
+	# Prepare replacement list
+	# rotate left  : tmp f1 f2 ... fn-1 fn tmp
+	# rotate right : tmp fn fn-1 ... f2 f1 tmp
+	# swap files   : tmp f1 f2 tmp ... fn-1 fn tmp
+	# flip files   : tmp fn f1 tmp fn-1 f2 tmp ...
+	my @files;
+	if ( $rotate eq "left" ) {
+		@files = @ARGV;
+	} elsif ( $rotate eq "right" ) {
+		@files = reverse @ARGV;
+	} elsif ( $rotate eq "swap" ) {
+		die "Even number of files required\n" if @ARGV % 2;
+
+		for ( my $i = 1; $i < @ARGV; $i += 2 ) {
+			push @files, $ARGV[$i - 1], $ARGV[$i], $tmp;
+		}
+
+		# Remove an extra name
+		pop @files;
+	} elsif ( $rotate eq "flip" ) {
+		die "Even number of files required\n" if @ARGV % 2;
+
+		for ( my $i = 0; $i < @ARGV / 2; $i++ ) {
+			push @files, $ARGV[$#ARGV - $i], $ARGV[$i], $tmp;
+		}
+
+		# Remove an extra name
+		pop @files;
+	}
+	unshift @files, $tmp;
+	push @files, $tmp;
+
+	# Rename files accordingly the mode
+	for ( my $i = 1; $i < @files; $i++ ) {
+		my $x = $files[$i];
+		my $y = $files[$i - 1];
+
+		$verbose and warn "rename '$x' '$y'\n";
+
+		next if $dry_run;
+
+		rename $x, $y or die "Cannot rename '$x' '$y': $!\n";
+	}
+	exit;
+};
 
 # =========================================================================
 
@@ -142,7 +258,7 @@ my $evaluate = ! $filename_only ? $eval : sub {
 # =========================================================================
 
 for ( -t 0 ? @ARGV : do {
-	warn "Reading from <stdin>\n";
+	warn "Reading from <stdin>\n" if $verbose;
 	local $/ = "\0" if $null;
 	chop( my @files = <STDIN> );
 	@files;
