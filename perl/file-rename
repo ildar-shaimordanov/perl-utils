@@ -152,6 +152,7 @@ my $force;
 my $action = "move";
 my $filename_only;
 my $null;
+my $die_on_error;
 
 my @expr;
 
@@ -188,6 +189,20 @@ sub input {
 		chop( @ARGV = <STDIN> );
 	}
 	@ARGV;
+}
+
+sub act {
+	my ( $x, $y ) = @_;
+
+	$verbose and warn "$action '$x' '$y'\n";
+
+	return if $dry_run;
+
+	no strict 'refs';
+	$action->($x, $y) or do {
+		warn "Cannot $action '$x' '$y': $!\n";
+		exit 255 if $die_on_error;
+	}
 }
 
 # =========================================================================
@@ -239,16 +254,15 @@ $rotate and do {
 	unshift @files, $tmp;
 	push @files, $tmp;
 
+	$action = "rename";
+	$die_on_error = 1;
+
 	# Rename files accordingly the mode
 	for ( my $i = 1; $i < @files; $i++ ) {
 		my $x = $files[$i];
 		my $y = $files[$i - 1];
 
-		$verbose and warn "rename '$x' '$y'\n";
-
-		next if $dry_run;
-
-		rename $x, $y or die "Cannot rename '$x' '$y': $!\n";
+		act $x, $y;
 	}
 	exit;
 };
@@ -282,14 +296,7 @@ for ( input ) {
 		next;
 	}
 
-	$verbose and warn "$action '$old' '$_'\n";
-
-	next if $dry_run;
-
-	{
-		no strict 'refs';
-		$action->($old, $_) or warn "Cannot $action '$old' '$_': $!\n";
-	}
+	act $old, $_;
 }
 
 # =========================================================================
