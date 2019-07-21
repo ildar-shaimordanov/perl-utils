@@ -181,7 +181,20 @@ exit 1 unless GetOptions(
 
 # =========================================================================
 
+sub input {
+	unless ( -t 0 ) {
+		warn "Reading from <stdin>\n" if $verbose;
+		local $/ = "\0" if $null;
+		chop( @ARGV = <STDIN> );
+	}
+	@ARGV;
+}
+
+# =========================================================================
+
 $rotate and do {
+	input;
+
 	# Make sure the files exist
 	for ( @ARGV ) {
 		die "'$_' not found\n" unless -e $_;
@@ -242,7 +255,7 @@ $rotate and do {
 
 # =========================================================================
 
-push @expr, shift unless @expr;
+push @expr, shift if ! @expr && @ARGV;
 
 my $code = join ";", @expr or pod2usage;
 
@@ -257,12 +270,7 @@ my $evaluate = ! $filename_only ? $eval : sub {
 
 # =========================================================================
 
-for ( -t 0 ? @ARGV : do {
-	warn "Reading from <stdin>\n" if $verbose;
-	local $/ = "\0" if $null;
-	chop( my @files = <STDIN> );
-	@files;
-} ) {
+for ( input ) {
 	my $old = $_;
 
 	$evaluate->();
