@@ -29,6 +29,16 @@ Outputs this help page.
 
 The code to be executed on filenames.
 
+=item B<-M> I<[-]MODULE[=IMPORT]>
+
+Load the module. It's almost similar to Perl's own option B<-M>.
+
+It executes C<use MODULE> before executing the expressions.
+
+It executes C<no MODULE>, if a dash C<-> is specified before the module name.
+
+The comma-separated list I<IMPORT> causes the module to import specific symbols.
+
 =item B<-v>, B<--verbose>
 
 Be verbose.
@@ -152,6 +162,7 @@ my $null;
 my $die_on_error;
 
 my @expr;
+my @use;
 
 my $rotate;
 
@@ -166,6 +177,7 @@ exit 1 unless GetOptions(
 	"z|0|null"		=> \$null,
 
 	"e|E|expr=s@"		=> \@expr,
+	"M=s@"			=> \@use,
 
 	"L"		=> sub { $rotate = "left"; },
 	"R"		=> sub { $rotate = "right"; },
@@ -279,7 +291,12 @@ $rotate and do {
 push @expr, shift if ! @expr && @ARGV;
 @expr or pod2usage;
 
-my $code = join ";", @expr;
+for ( @use ) {
+	s/^-/no / or s/^/use /;
+	s/=(.*)/ split ",", q{$1}/;
+}
+
+my $code = join ";", @use, @expr;
 
 my $eval = eval sprintf "sub {\n#line 1\n%s\n}", $code or die $@;
 
