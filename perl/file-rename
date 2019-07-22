@@ -56,7 +56,8 @@ instead of a newline.
 
 =item B<--rotate>=I<ROTATE-MODE>
 
-Rename files cyclically:
+Rename files cyclically. Rotation is implemented by the Perl core function
+C<rename> and is limited by a single file system.
 
 =over 8
 
@@ -188,7 +189,7 @@ sub input {
 		local $/ = "\0" if $null;
 		chop( @ARGV = <STDIN> );
 	}
-	@ARGV;
+	@ARGV = map glob, @ARGV;
 }
 
 sub act {
@@ -222,7 +223,7 @@ $rotate and do {
 		die "'$_' not found\n" unless -e $_;
 	}
 
-	# Crate a temp filename that doesn't exist
+	# Create a temp filename that doesn't exist
 	my $tmp;
 	while ( 1 ) {
 		$tmp = sprintf "rotate-tmp-%d", rand() * 1_000_000;
@@ -234,6 +235,9 @@ $rotate and do {
 	# rotate right : tmp fn fn-1 ... f2 f1 tmp
 	# swap files   : tmp f1 f2 tmp ... fn-1 fn tmp
 	# flip files   : tmp fn f1 tmp fn-1 f2 tmp ...
+	#
+	# Renaming will be done in the loop, accordingly this way:
+	# rename $argv[$i-1], $argv[$i]
 	my @files;
 	if ( $rotate eq "left" ) {
 		@files = @ARGV;
@@ -264,7 +268,7 @@ $rotate and do {
 	$action = "rename";
 	$die_on_error = 1;
 
-	# Rename files accordingly the mode
+	# Rename files accordingly the selected mode
 	for ( my $i = 1; $i < @files; $i++ ) {
 		my $x = $files[$i];
 		my $y = $files[$i - 1];

@@ -179,7 +179,10 @@ END {
 
 ## `file-rename`
 
-`file-rename` renames the filenames supplied according to the rule specified as the first argument.
+`file-rename` renames the filenames supplied according to the rule
+specified as the first argument. It supports several ways to rename files:
+applying a perl code to copy or move files; rotating names cyclically
+left or right; swapping two names; flipping the whole list of files.
 
 **Example**
 
