@@ -314,7 +314,10 @@ for ( input ) {
 
 	$evaluate->();
 
-	next if $old eq $_;
+	if ( $old eq $_ ) {
+		warn "'$old' not changed'\n" if $verbose;
+		next;
+	}
 
 	if ( -e $_ && ! $force ) {
 		warn "'$old' not renamed: '$_' already exists\n";
