@@ -205,6 +205,13 @@ sub act {
 	}
 }
 
+# When invoke the core rename function under the no strict refs mode,
+# Perl dies with the message "Undefined subroutine &main::rename called".
+# I redeclare the function to avoid this error.
+sub rename {
+	CORE::rename $_[0], $_[1];
+}
+
 # =========================================================================
 
 $rotate and do {
