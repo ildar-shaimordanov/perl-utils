@@ -193,6 +193,7 @@ file-rename 's/\.bak$//' *.bak
 **See Also**
 
 * https://metacpan.org/pod/rename
-* https://metacpan.org/pod/distribution/App-RenameUtils/script/rename-swap
+* https://metacpan.org/pod/App::RenameUtils
+* http://plasmasturm.org/code/rename/
 
 # To be continued...
