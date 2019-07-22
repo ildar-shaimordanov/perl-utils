@@ -277,8 +277,9 @@ $rotate and do {
 # =========================================================================
 
 push @expr, shift if ! @expr && @ARGV;
+@expr or pod2usage;
 
-my $code = join ";", @expr or pod2usage;
+my $code = join ";", @expr;
 
 my $eval = eval sprintf "sub {\n#line 1\n%s\n}", $code or die $@;
 
