@@ -6,7 +6,7 @@ file-rename - rename multiple files
 
 =head1 SYNOPSIS
 
-  file-rename [OPTIONS] [-e|-E CODE]*|CODE [FILES]
+  file-rename [OPTIONS] [[-e|-E CODE]*|CODE] [FILES]
 
 =head1 DESCRIPTION
 
@@ -64,46 +64,28 @@ Do not rename directories: only rename filename component of path.
 Treat the input as a set of lines terminated by a zero byte C<\0>,
 instead of a newline.
 
-=item B<--rotate>=I<ROTATE-MODE>
+=item B<-r> I<RENAME-MODE>, B<--rename>=I<RENAME-MODE>
 
 Rename files cyclically. Rotation is implemented by the Perl core function
 C<rename> and is limited by a single file system.
 
 =over 8
 
-=item I<left>
+=item I<l> or I<rotate-left>
 
 Rename files rotating names left: C<S<< f1 <- f2 <- ... <- fn <- f1 >>>.
 
-=item I<right>
+=item I<r> or I<rotate-right>
 
 Rename files rotating names right: C<S<< f1 -> f2 -> ... -> fn -> f1 >>>.
 
-=item I<swap>
+=item I<s> or I<swap>
 
 Rename files by swapping the closest names: C<S<< f1 <-> f2 f3 <-> f4 ... >>>.
 
-=item I<flip>
+=item I<f> or I<flip>
 
 Rename files by swapping the farthest names: C<S<< f1 <-> fn f2 <-> fn-1 ... >>>.
-
-=back
-
-=item B<-L>
-
-Synonym for B<--rotate>=I<left>.
-
-=item B<-R>
-
-Synonym for B<--rotate>=I<right>.
-
-=item B<-S>
-
-Synonym for B<--rotate>=I<swap>.
-
-=item B<-F>
-
-Synonym for B<--rotate>=I<flip>.
 
 =back
 
@@ -164,7 +146,13 @@ my $die_on_error;
 my @expr;
 my @use;
 
-my $rotate;
+my $rename_mode;
+my %rename_modes = (
+	"l" => "rotate-left",
+	"r" => "rotate-right",
+	"s" => "swap",
+	"f" => "flip",
+);
 
 exit 1 unless GetOptions(
 	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
@@ -179,13 +167,9 @@ exit 1 unless GetOptions(
 	"e|E|expr=s@"		=> \@expr,
 	"M=s@"			=> \@use,
 
-	"L"		=> sub { $rotate = "left"; },
-	"R"		=> sub { $rotate = "right"; },
-	"S"		=> sub { $rotate = "swap"; },
-	"F"		=> sub { $rotate = "flip"; },
-	"rotate=s"	=> sub {
-		$rotate = $_[1];
-		$rotate =~ /^(left|right|swap|flip)$/ or die "Bad rotate mode: $rotate\n";
+	"r|rename=s"	=> sub {
+		( $rename_mode ) = $rename_modes{ $_[1] } // grep /\Q$_[1]\E/, values %rename_modes;
+		die "Bad rename mode: $_[1]\n" unless $rename_mode;
 	},
 );
 
@@ -223,7 +207,7 @@ sub rename {
 
 # =========================================================================
 
-$rotate and do {
+$rename_mode and do {
 	input;
 
 	# Make sure the files exist
@@ -247,11 +231,11 @@ $rotate and do {
 	# Renaming will be done in the loop, accordingly this way:
 	# rename $argv[$i-1], $argv[$i]
 	my @files;
-	if ( $rotate eq "left" ) {
+	if ( $rename_mode eq "rotate-left" ) {
 		@files = @ARGV;
-	} elsif ( $rotate eq "right" ) {
+	} elsif ( $rename_mode eq "rotate-right" ) {
 		@files = reverse @ARGV;
-	} elsif ( $rotate eq "swap" ) {
+	} elsif ( $rename_mode eq "swap" ) {
 		die "Even number of files required\n" if @ARGV % 2;
 
 		for ( my $i = 1; $i < @ARGV; $i += 2 ) {
@@ -260,7 +244,7 @@ $rotate and do {
 
 		# Remove an extra name
 		pop @files;
-	} elsif ( $rotate eq "flip" ) {
+	} elsif ( $rename_mode eq "flip" ) {
 		die "Even number of files required\n" if @ARGV % 2;
 
 		for ( my $i = 0; $i < @ARGV / 2; $i++ ) {
