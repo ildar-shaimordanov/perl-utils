@@ -89,15 +89,17 @@ Rename files by swapping the farthest names: C<S<< f1 <-> fn f2 <-> fn-1 ... >>>
 
 =back
 
+=back
+
 =head1 SEE ALSO
 
 mv(1)
 
 cp(1)
 
-L<https://perldoc.perl.org/functions/rename.html>
+perldoc -f rename
 
-L<https://metacpan.org/pod/File::Copy>
+perldoc File::Copy
 
 L<https://metacpan.org/pod/rename>
 
@@ -110,7 +112,8 @@ L<http://plasmasturm.org/code/rename/>
 This script is inspired by codes from Larry Wall and Robin Barker with
 some other ideas from perlancar and Aristotle Pagaltzis. This work is
 attempt to rethink the already existing scripts, rework the code, extend
-(if it's possible) and make the usage more convenient.
+(if it's possible) and make the usage more convenient. The last one is
+my personal vision.
 
 Ildar Shaimordanov
 
