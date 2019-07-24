@@ -184,7 +184,9 @@ sub input {
 		local $/ = "\0" if $null;
 		chop( @ARGV = <STDIN> );
 	}
-	@ARGV = map glob, @ARGV;
+	# globbing only when meet wildcards
+	# so win and unix works the same way
+	@ARGV = map { /[*?]/ ? glob : $_ } @ARGV;
 }
 
 sub act {
