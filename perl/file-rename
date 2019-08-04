@@ -10,12 +10,12 @@ file-rename - rename multiple files
 
 =head1 DESCRIPTION
 
-C<file-rename> renames the filenames supplied according to the rule
-specified as the first argument. The perlexpr argument is a Perl
-expression which is expected to modify the $_ string in Perl for at least
-some of the filenames specified. If a given filename is not modified
-by the expression, it will not be renamed. If no filenames are given on
-the command line, filenames will be read via standard input.
+C<file-rename> renames the files according to the rule specified as
+the first argument. The perlexpr argument is a Perl expression which
+is expected to modify the $_ string in Perl for at least some of
+the filenames specified. If a given filename is not modified by the
+expression, it will not be renamed. If no filenames are given on the
+command line, filenames will be read via standard input.
 
 =head1 OPTIONS
 
@@ -234,33 +234,27 @@ $rename_mode and do {
 	# flip files   : tmp fn f1 tmp fn-1 f2 tmp ...
 	#
 	# Renaming will be done in the loop, accordingly this way:
-	# rename $argv[$i-1], $argv[$i]
+	# rename $argv[$i], $argv[$i-1]
 	my @files;
 	if ( $rename_mode eq "rotate-left" ) {
-		@files = @ARGV;
+		@files = ( $tmp, @ARGV, $tmp );
 	} elsif ( $rename_mode eq "rotate-right" ) {
-		@files = reverse @ARGV;
+		@files = ( $tmp, reverse(@ARGV), $tmp );
 	} elsif ( $rename_mode eq "swap" ) {
 		die "Even number of files required\n" if @ARGV % 2;
 
+		@files = ( $tmp );
 		for ( my $i = 1; $i < @ARGV; $i += 2 ) {
 			push @files, $ARGV[$i - 1], $ARGV[$i], $tmp;
 		}
-
-		# Remove an extra name
-		pop @files;
 	} elsif ( $rename_mode eq "flip" ) {
 		die "Even number of files required\n" if @ARGV % 2;
 
+		@files = ( $tmp );
 		for ( my $i = 0; $i < @ARGV / 2; $i++ ) {
 			push @files, $ARGV[$#ARGV - $i], $ARGV[$i], $tmp;
 		}
-
-		# Remove an extra name
-		pop @files;
 	}
-	unshift @files, $tmp;
-	push @files, $tmp;
 
 	$action = "rename";
 	$die_on_error = 1;
