@@ -39,6 +39,22 @@ It executes C<no MODULE>, if a dash C<-> is specified before the module name.
 
 The comma-separated list I<IMPORT> causes the module to import specific symbols.
 
+=item B<-T>=I<ENCODE>, B<--transcode>=I<ENCODE>
+
+Apply for each filename the decoding before processing and encoding
+after processing.
+
+To encode output in a different encoding than input was decoded, two
+comma-separated encoding names are supplied.
+
+Assuming the script is launched as below:
+
+  -T ENC1,ENC2 -e '...'
+
+in fact, it works as follows:
+
+  -MEncode -e '$_ = decode(ENC1, $_); ... $_ = encode(ENC2, $_)'
+
 =item B<-v>, B<--verbose>
 
 Be verbose.
@@ -148,6 +164,7 @@ my $die_on_error;
 
 my @expr;
 my @use;
+my $transcode;
 
 my $rename_mode;
 my %rename_modes = (
@@ -169,6 +186,7 @@ exit 1 unless GetOptions(
 
 	"e|E|expr=s@"		=> \@expr,
 	"M=s@"			=> \@use,
+	"T|transcode=s"		=> \$transcode,
 
 	"r|rename=s"	=> sub {
 		( $rename_mode ) = $rename_modes{ $_[1] } // grep /\Q$_[1]\E/, values %rename_modes;
@@ -277,6 +295,25 @@ push @expr, shift if ! @expr && @ARGV;
 for ( @use ) {
 	s/^-/no / or s/^/use /;
 	s/=(.*)/ split ",", q{$1}/;
+}
+
+my $DECODE;
+my $ENCODE;
+
+if ( $transcode ) {
+	my @objs;
+	for ( split /,/, $transcode, 2 ) {
+		my $obj = Encode::find_encoding($_) or die "Encoding not found: $_\n";
+		push @objs, $obj;
+	}
+
+	( $DECODE, $ENCODE ) = @objs;
+	$ENCODE //= $DECODE;
+
+	push @use, 'use Encode';
+
+	unshift @expr, '$_ = $DECODE->decode($_)';
+	push    @expr, '$_ = $ENCODE->encode($_)';
 }
 
 my $code = join ";", @use, @expr;
