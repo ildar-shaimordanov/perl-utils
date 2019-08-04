@@ -53,7 +53,7 @@ Assuming the script is launched as below:
 
 in fact, it works as follows:
 
-  -MEncode -e '$_ = decode(ENC1, $_); ... $_ = encode(ENC2, $_)'
+  -MEncode -e '$_ = decode(ENC1, $_); ...; $_ = encode(ENC2, $_)'
 
 =item B<-v>, B<--verbose>
 
@@ -89,19 +89,27 @@ C<rename> and is limited by a single file system.
 
 =item I<l> or I<rotate-left>
 
-Rename files rotating names left: C<S<< f1 <- f2 <- ... <- fn <- f1 >>>.
+Rename files rotating names left:
+
+  f1 <- f2 <- ... <- fn <- f1
 
 =item I<r> or I<rotate-right>
 
-Rename files rotating names right: C<S<< f1 -> f2 -> ... -> fn -> f1 >>>.
+Rename files rotating names right:
+
+  f1 -> f2 -> ... -> fn -> f1
 
 =item I<s> or I<swap>
 
-Rename files by swapping the closest names: C<S<< f1 <-> f2 f3 <-> f4 ... >>>.
+Rename files by swapping the closest names:
+
+  f1 <-> f2 f3 <-> f4 ...
 
 =item I<f> or I<flip>
 
-Rename files by swapping the farthest names: C<S<< f1 <-> fn f2 <-> fn-1 ... >>>.
+Rename files by swapping the farthest names:
+
+  f1 <-> fn f2 <-> fn-1 ...
 
 =back
 
