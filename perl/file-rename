@@ -37,7 +37,7 @@ It executes C<use MODULE> before executing the expressions.
 
 It executes C<no MODULE>, if a dash C<-> is specified before the module name.
 
-The comma-separated list I<IMPORT> causes the module to import specific symbols.
+The comma-separated list C<IMPORT> causes the module to import specific symbols.
 
 =item B<-T>=I<ENCODE>, B<--transcode>=I<ENCODE>
 
@@ -53,7 +53,10 @@ Assuming the script is launched as below:
 
 in fact, it works as follows:
 
-  -MEncode -e '$_ = decode(ENC1, $_); ...; $_ = encode(ENC2, $_)'
+  -MEncode -e '$_ = $DECODE->decode($_); ...; $_ = $ENCODE->encode($_)'
+
+where C<$DECODE> and C<$ENCODE> are encoding objects corresponding to
+the encodings C<ENC1> and C<ENC2>.
 
 =item B<-v>, B<--verbose>
 
