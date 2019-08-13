@@ -173,6 +173,9 @@ my $filename_only;
 my $null;
 my $die_on_error;
 
+# Current line number
+my $NR = 0;
+
 my @expr;
 my @use;
 my $transcode;
@@ -341,6 +344,8 @@ my $evaluate = ! $filename_only ? $eval : sub {
 # =========================================================================
 
 for ( input ) {
+	$NR++;
+
 	my $old = $_;
 
 	$evaluate->();
