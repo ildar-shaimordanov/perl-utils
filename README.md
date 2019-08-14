@@ -1,31 +1,35 @@
+# perl-utils
+
+## Table of Contents
+
+* [Preamble](#preamble)
+* [Paragraph processing utilities](#paragraph-processing-utilities)
+  * [`paragrep`](#paragrep)
+  * [`logmerge`](#logmerge)
+* [Other text-oriented utilities](#other-text-oriented-utilities)
+  * [`sponge`](#sponge)
+  * [`transpose`](#transpose)
+* [File-oriented utilities](#file-oriented-utilities)
+  * [`file-rename`](#file-rename)
+* [To be continued...](#to-be-continued)
 
 # Preamble
 
-**perl-utils** is the set of text-oriented utilities mostly for processing 
-paragraphs. By default, a paragraph is idenitified as a bunch of text 
-lines delimited by an empty or blank lines. 
+**perl-utils** is the set of text- and file-oriented utilities. Text-oriented scripts are supposed to be used mostly for processing paragraphs. By default, a paragraph is idenitified as a bunch of text lines delimited by an empty or blank lines.
 
-Assuming the text file is the set of paragraphs, it is easier to sort, 
-merge and filter some files without losing links between lines of 
-paragraphs. 
+Assuming the text file is the set of paragraphs, it is easier to sort, merge and filter some files without losing links between lines of paragraphs.
 
-For example, multiline log entries in log files could contain additional 
-useful information. Using `grep -C` (or `grep -A`, or `grep -B`) doesn't 
-guarantee complete extraction of particular log entries (or can extract 
-other log entries not necessary at the moment). 
+For example, multiline log entries in log files could contain additional useful information. Using `grep -C` (or `grep -A`, or `grep -B`) doesn't guarantee complete extraction of particular log entries (or can extract other log entries not necessary at the moment).
 
 # Paragraph processing utilities
 
 ## `paragrep`
 
-paragrep - grep-like filter for searching matches in paragraphs. 
+paragrep - grep-like filter for searching matches in paragraphs.
 
-paragrep assumes the input consists of paragraphs and prints the 
-paragraphs matching a pattern. Paragraph is identified as a block of text 
-delimited by an empty or blank lines. 
+paragrep assumes the input consists of paragraphs and prints the paragraphs matching a pattern. Paragraph is identified as a block of text delimited by an empty or blank lines.
 
-The initial version was very simple and was implemented as a shell 
-function invoking perl inline script for grepping log files:
+The initial version was very simple and was implemented as a shell function invoking perl inline script for grepping log files:
 
 ```bash
 paragrep() {
@@ -42,14 +46,11 @@ paragrep() {
 }
 ```
 
-Later I decided to implement it as the standalone script adding more 
-functionality and flexibility. 
+Later I decided to implement it as the standalone script adding more functionality and flexibility.
 
 **Example**
 
-Each log entry in log files usually begins with the timestamp in the 
-generalized numeric form *date time*, which can be covered by the pattern 
-without reflecting on which date format has been used to output dates:
+Each log entry in log files usually begins with the timestamp in the generalized numeric form *date time*, which can be covered by the pattern without reflecting on which date format has been used to output dates:
 
 ```bash
 paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
@@ -64,10 +65,7 @@ alias cgrep="paragrep -Pp '^(#@ |#-> )?\['"
 
 **Similar tools**
 
-While working on the script I found two interesting implementations of the 
-task on Python and NodeJS. But none of them is mandatory to be installed 
-on the systems I support. And I don't like Python. And Perl is still alive 
-and it is flexible, powerful, richful and fast scripting language in Unix.
+While working on the script I found two interesting implementations of the task on Python and NodeJS. But none of them is mandatory to be installed on the systems I support. And I don't like Python. And Perl is still alive and it is flexible, powerful, richful and fast scripting language in Unix.
 
 * https://github.com/bmc/paragrep
 * https://github.com/rrnewton/paragrep
@@ -75,22 +73,17 @@ and it is flexible, powerful, richful and fast scripting language in Unix.
 
 ## `logmerge`
 
-Small and powerful script to merge two or more logfiles so that multilined 
-entries appear in the correct chronological order without breaks of log 
-entries. 
+Small and powerful script to merge two or more logfiles so that multilined entries appear in the correct chronological order without breaks of log entries.
 
 * https://github.com/ildar-shaimordanov/logmerge
 
-# Other utilities
+# Other text-oriented utilities
 
 ## `sponge`
 
-sponge is Perl version of the sponge from the Debian package moreutils. 
+sponge is Perl version of the sponge from the Debian package moreutils.
 
-It reads standard input to memory and writes it out to the specified file. 
-Unlike a shell redirect, the script soaks up all its input before opening 
-the output file. This allows constructing pipelines that read from and 
-write to the same file. If no file is specified, outputs to STDOUT. 
+It reads standard input to memory and writes it out to the specified file. Unlike a shell redirect, the script soaks up all its input before opening the output file. This allows constructing pipelines that read from and write to the same file. If no file is specified, outputs to STDOUT.
 
 My first release was the Perl inline script within the shell function:
 
@@ -125,8 +118,7 @@ sponge() {
 
 **Example**
 
-An abstract example of usage is described in the tool's help and shown 
-below:
+An abstract example of usage is described in the tool's help and shown below:
 
 ```bash
 sed '...' file | grep '...' | sponge [-a] file
@@ -139,8 +131,7 @@ sed '...' file | grep '...' | sponge [-a] file
 
 ## `transpose`
 
-This is Perl implementation of the AWK script to transpose the input file 
-so rows become columns and columns become rows. 
+This is Perl implementation of the AWK script to transpose the input file so rows become columns and columns become rows.
 
 ```awk
 #!/usr/bin/awk -f
@@ -177,12 +168,11 @@ END {
 * https://stackoverflow.com/q/1729824/3627676
 * http://www.perlmonks.org/?node_id=1162532
 
+# File-oriented utilities
+
 ## `file-rename`
 
-`file-rename` renames the filenames supplied according to the rule
-specified as the first argument. It supports several ways to rename files:
-applying a perl code to copy or move files; rotating names cyclically
-left or right; swapping two names; flipping the whole list of files.
+`file-rename` renames the filenames supplied according to the rule specified as the first argument. It supports several ways to rename files: applying a perl code to copy or move files; rotating names cyclically left or right; swapping two names; flipping the whole list of files.
 
 **Example**
 
