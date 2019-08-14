@@ -27,7 +27,20 @@ Outputs this help page.
 
 =item B<-e> I<EXPRESSION>, B<-E> I<EXPRESSION>, B<--expr>=I<EXPRESSION>
 
-The code to be executed on filenames.
+The code to be executed on filenames. It uses all the power by Perl and
+supplies the mechanism for renaming files.
+
+In addition it supplies the special variable C<$NR> as a reference for
+the current line number to enable enumeration if it's necessary.
+
+For example:
+
+  file-rename 's/^/$NR. /' ...
+  file-rename 's/^/sprintf "%02d. ", $NR/e' ...
+
+When the B<-T> option is specified, the C<$ENCODE> and C<$DECODE>
+variables are used internally for encoding and decoding the processed
+file names. See the corresponding description below.
 
 =item B<-M> I<[-]MODULE[=IMPORT]>
 
