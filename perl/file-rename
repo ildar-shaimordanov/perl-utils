@@ -52,7 +52,7 @@ It executes C<no MODULE>, if a dash C<-> is specified before the module name.
 
 The comma-separated list C<IMPORT> causes the module to import specific symbols.
 
-=item B<-T>=I<ENCODE>, B<--transcode>=I<ENCODE>
+=item B<-T> I<ENCODE>, B<--transcode>=I<ENCODE>
 
 Apply for each filename the decoding before processing and encoding
 after processing.
