@@ -189,6 +189,10 @@ my $die_on_error;
 # Current line number
 my $NR = 0;
 
+# Encoders used internally with -T
+my $DECODE;
+my $ENCODE;
+
 my @expr;
 my @use;
 my $transcode;
@@ -323,9 +327,6 @@ for ( @use ) {
 	s/^-/no / or s/^/use /;
 	s/=(.*)/ split ",", q{$1}/;
 }
-
-my $DECODE;
-my $ENCODE;
 
 if ( $transcode ) {
 	my @objs;
