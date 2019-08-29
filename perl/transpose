@@ -103,7 +103,7 @@ pod2usage unless GetOptions(
 	"h|help" => sub {
 		pod2usage({
 			-verbose => 2, 
-			-noperldoc => 0, 
+			-noperldoc => 1, 
 		});
 	}, 
 
