@@ -35,14 +35,28 @@ The initial version was very simple and was implemented as a shell function invo
 paragrep() {
 	perl -ne '
 	if ( m/$break_of_para/ ) {
-		print $para if defined $para && $para =~ /$match_pattern/;
+		print $para if defined $para && $para =~ /$regexp/;
 		$para = "";
 	}
 	$para .= $_;
 	END {
-		print $para if defined $para && $para =~ /$match_pattern/;
+		print $para if defined $para && $para =~ /$regexp/;
 	}
-	' -s -- -break_of_para="$1" -match_pattern="$2" "${@:3}"
+	' -s -- -break_of_para="$1" -regexp="$2" "${@:3}"
+}
+```
+
+or
+
+```bash
+paragrep() {
+	perl -ne '
+	( m/$break_of_para/ or eof ) and do {
+		print $para if defined $para && $para =~ /$regexp/;
+		$para = "";
+	};
+	$para .= $_;
+	' -s -- -break_of_para="$1" -regexp="$2" "${@:3}"
 }
 ```
 
