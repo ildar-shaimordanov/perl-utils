@@ -82,7 +82,7 @@ alias cgrep="paragrep -Pp '^(#@ |#-> )?\['"
 While working on the script I found a lot of interesting implementations of the task on different languages. Here is a quite short excerpt of them interested me:
 
 * [paragrep in Python](https://github.com/bmc/paragrep)
-* [paragrep in NodeJS](https://github.com/rrnewton/paragrep)
+* [paragrep in Haskell](https://github.com/rrnewton/paragrep)
 * [Ack](https://beyondgrep.com/)
 * [greple](https://github.com/kaz-utashiro/greple)
 * [Example from Perl Cookbook, Chapter 6](https://resources.oreilly.com/examples/9780596003135/blob/master/cookbook.examples/ch06/paragrep)
