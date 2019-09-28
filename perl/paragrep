@@ -12,8 +12,8 @@ paragrep - grep-like filter for searching matches in paragraphs
 =head1 DESCRIPTION
 
 paragrep assumes the input consists of paragraphs and prints the
-paragraphs matching a pattern. Paragraph is identified as a block of
-text delimited by an empty or blank lines.
+paragraphs matching a pattern. By default, the paragraph is identified
+as the text block delimited by empty or blank lines.
 
 =head1 OPTIONS
 
@@ -39,7 +39,7 @@ Print the program version and exit.
 
 Use I<PATTERN> as the pattern to identify the break of paragraphs. By
 default, this value is C<^\s*$>. The break of paragraphs is considered
-as a separator and excluded from the output.
+as the separator and excluded from the output.
 
 =item B<-P>, B<--begin-of-paragraph>
 
@@ -166,7 +166,7 @@ perlre(1)
 
 =head1 COPYRIGHT
 
-Copyright 2017 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
+Copyright 2017, 2019 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
@@ -214,25 +214,23 @@ pod2usage unless GetOptions(
 	},
 
 	"p|break-of-paragraph=s" => \$break_of_para,
-	"P|begin-of-paragraph" => \$begin_of_para,
+	"P|begin-of-paragraph"   => \$begin_of_para,
 
 	"e|regexp=s" => \@patterns, 
-	"f|file=s" => \@patterns_files,
+	"f|file=s"   => \@patterns_files,
 
-	"i|ignore-case" => \$ignore_case,
+	"i|ignore-case"  => \$ignore_case,
 	"v|invert-match" => \$invert_match,
-	"w|word-regexp" => \$word_regexp,
+	"w|word-regexp"  => \$word_regexp,
 
-	"n|line-number" => \$line_number,
+	"n|line-number"   => \$line_number,
 	"H|with-filename" => sub { $with_filename = 1; },
-	"h|no-filename" => sub { $with_filename = 0; },
+	"h|no-filename"   => sub { $with_filename = 0; },
 
 	"A|and" => sub { $regexp_anded = 1; },
-	"O|or" => sub { $regexp_anded = 0; },
+	"O|or"  => sub { $regexp_anded = 0; },
 
-	"<>" => sub {
-		push @globs, $_[0];
-	}, 
+	"<>" => sub { push @globs, $_[0]; },
 );
 
 # =========================================================================
