@@ -81,6 +81,12 @@ Similarly, it must be either at the end of the line of each paragraphs or
 followed by a non-word constituent character. Word-constituent characters 
 are letters, digits, and the underscore. 
 
+=back
+
+=head2 Multiple Matching Control
+
+=over 4
+
 =item B<-A>, B<--and>
 
 =item B<-O>, B<--or>
@@ -97,6 +103,8 @@ last pattern has affect.
 
 =head1 EXAMPLES
 
+=head2 Example
+
 The following example demonstrates the customized paragraph definition for 
 parsing log files. Usually, applications producing log files write one log 
 entry per one line. Somethimes applications (especially written in Java) 
@@ -107,10 +115,21 @@ been used to output dates:
 
     paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
 
+=head2 Example
+
+In the following example it is considered that paragraphs begin with C<[>
+(similar to INI files) with the optional prefix C<#@ > or C<#-E<gt> >.
+
+    paragrep -Pp '^(#@ |#-> )?\[' PATTERN FILENAME
+
+=head2 Example
+
 The example below demonstrates how C<paragrep> can imitate behaviour of 
 the standard C<grep>:
 
     paragrep -Pp '\n' PATTERN FILENAME
+
+=head2 Example
 
 The following example shows how the combining option simplifies usage. The 
 resulting output will consist of the paragraphs matching both I<PATTERN1> 
@@ -145,10 +164,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.5.1";
-
-my $debug = 0;
-my $verbose = 0;
+our $VERSION = "0.5.2";
 
 my $break_of_para = '^\\s*$';
 my $begin_of_para = 0;
@@ -168,7 +184,7 @@ my @files = ();
 # =========================================================================
 
 pod2usage unless GetOptions(
-	"h|help" => sub {
+	"help" => sub {
 		pod2usage({
 			-verbose => 2, 
 			-noperldoc => 1, 
@@ -318,7 +334,7 @@ foreach my $file ( @files ) {
 		if ( m/$break_of_para/ ) {
 			print_para;
 			next unless $begin_of_para;
-		};
+		}
 		$para .= $_;
 	}
 
