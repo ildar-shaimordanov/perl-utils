@@ -11,9 +11,9 @@ paragrep - grep-like filter for searching matches in paragraphs
 
 =head1 DESCRIPTION
 
-paragrep assumes the input consists of paragraphs and prints the 
-paragraphs matching a pattern. Paragraph is identified as a block of text 
-delimited by an empty or blank lines. 
+paragrep assumes the input consists of paragraphs and prints the
+paragraphs matching a pattern. Paragraph is identified as a block of
+text delimited by an empty or blank lines.
 
 =head1 OPTIONS
 
@@ -37,15 +37,15 @@ Print the program version and exit.
 
 =item B<-p> I<PATTERN>, B<--break-of-paragraph=>I<PATTERN>
 
-Use I<PATTERN> as the pattern to identify the break of paragraphs. By 
-default, this value is C<^\s*$>. The break of paragraphs is considered as 
-a separator and excluded from the output.
+Use I<PATTERN> as the pattern to identify the break of paragraphs. By
+default, this value is C<^\s*$>. The break of paragraphs is considered
+as a separator and excluded from the output.
 
 =item B<-P>, B<--begin-of-paragraph>
 
-If this option is specified in the command line, the meaning of the option 
-B<-p> is modified to identify the first line of the paragraph which is 
-considered as the part of a paragraph.
+If this option is specified in the command line, the meaning of the
+option B<-p> is modified to identify the first line of the paragraph
+which is considered as the part of a paragraph.
 
 =back
 
@@ -55,10 +55,10 @@ considered as the part of a paragraph.
 
 =item B<-e> I<PATTERN>, B<--regexp=>I<PATTERN>
 
-Use I<PATTERN> as the pattern. This can be used to specify multiple search 
-patterns, or to protect a pattern beginning with a hyphen (I<->). 
+Use I<PATTERN> as the pattern. This can be used to specify multiple
+search patterns, or to protect a pattern beginning with a hyphen (I<->).
 
-This option can be specified multiple times or omitted for briefness. 
+This option can be specified multiple times or omitted for briefness.
 
 =item B<-f> I<FILE>, B<--file=>I<FILE>
 
@@ -66,7 +66,7 @@ Obtain patterns from I<FILE>, one per line.
 
 =item B<-i>, B<--ignore-case>
 
-Ignore case distinctions in both the I<PATTERN> and the input files. 
+Ignore case distinctions in both the I<PATTERN> and the input files.
 
 =item B<-v>, B<--invert-match>
 
@@ -74,12 +74,12 @@ Invert the sense of matching, to select non-matching paragraphs.
 
 =item B<-w>, B<--word-regexp>
 
-Select only those paragraphs containing matches that form whole words. The 
-test is that the matching substring must either be at the beginning of the 
-line of each paragraphs, or preceded by a non-word constituent character. 
-Similarly, it must be either at the end of the line of each paragraphs or 
-followed by a non-word constituent character. Word-constituent characters 
-are letters, digits, and the underscore. 
+Select only those paragraphs containing matches that form whole words. The
+test is that the matching substring must either be at the beginning of the
+line of each paragraphs, or preceded by a non-word constituent character.
+Similarly, it must be either at the end of the line of each paragraphs or
+followed by a non-word constituent character. Word-constituent characters
+are letters, digits, and the underscore.
 
 =back
 
@@ -111,13 +111,13 @@ there is the only file or only standard input.
 
 =item B<-O>, B<--or>
 
-These options specify whether multiple search patterns specified by the 
-I<-e> options should be logically I<AND>ed together or logically I<OR>ed 
-together. If not specified, the patterns are assumed logically I<OR>ed. 
+These options specify whether multiple search patterns specified by the
+I<-e> options should be logically I<AND>ed together or logically I<OR>ed
+together. If not specified, the patterns are assumed logically I<OR>ed.
 
-These options can be used to simplify the commands searching for matches 
-to multiple patterns. More than one of them can be specified but the only 
-last pattern has affect. 
+These options can be used to simplify the commands searching for matches
+to multiple patterns. More than one of them can be specified but the
+only last pattern has affect.
 
 =back
 
@@ -125,13 +125,13 @@ last pattern has affect.
 
 =head2 Example
 
-The following example demonstrates the customized paragraph definition for 
-parsing log files. Usually, applications producing log files write one log 
-entry per one line. Somethimes applications (especially written in Java) 
-produce multiline log entries. Each log entry begins with the timestamp in 
-the generalized form C<date time>, which can be covered by the pattern 
-C<\d+/\d+/\d+ \d+:\d+:\d+> without reflecting on which date format has 
-been used to output dates:
+The following example demonstrates the customized paragraph definition
+for parsing log files. Usually, applications producing log files write
+one log entry per one line. Somethimes applications (especially written
+in Java) produce multiline log entries. Each log entry begins with the
+timestamp in the generalized form C<date time>, which can be covered by
+the pattern C<\d+/\d+/\d+ \d+:\d+:\d+> without reflecting on which date
+format has been used to output dates:
 
     paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
 
@@ -144,16 +144,16 @@ In the following example it is considered that paragraphs begin with C<[>
 
 =head2 Example
 
-The example below demonstrates how C<paragrep> can imitate behaviour of 
+The example below demonstrates how C<paragrep> can imitate behaviour of
 the standard C<grep>:
 
     paragrep -Pp '\n' PATTERN FILENAME
 
 =head2 Example
 
-The following example shows how the combining option simplifies usage. The 
-resulting output will consist of the paragraphs matching both I<PATTERN1> 
-and I<PATTERN2>. 
+The following example shows how the combining option simplifies usage. The
+resulting output will consist of the paragraphs matching both I<PATTERN1>
+and I<PATTERN2>.
 
     cat FILENAME | paragrep -e PATTERN1 -e PATTERN2 -A
     cat FILENAME | paragrep -e PATTERN1 | paragrep -e PATTERN2
@@ -168,7 +168,7 @@ perlre(1)
 
 Copyright 2017 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
 
-This program is free software; you can redistribute it and/or modify it 
+This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
@@ -184,7 +184,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.6.1";
+our $VERSION = "0.6.2";
 
 my $break_of_para = '^\\s*$';
 my $begin_of_para = 0;
@@ -208,27 +208,27 @@ my @files = ();
 pod2usage unless GetOptions(
 	"help" => sub {
 		pod2usage({
-			-verbose => 2, 
-			-noperldoc => 1, 
+			-verbose => 2,
+			-noperldoc => 1,
 		});
-	}, 
+	},
 
-	"p|break-of-paragraph=s" => \$break_of_para, 
-	"P|begin-of-paragraph" => \$begin_of_para, 
+	"p|break-of-paragraph=s" => \$break_of_para,
+	"P|begin-of-paragraph" => \$begin_of_para,
 
 	"e|regexp=s" => \@patterns, 
 	"f|file=s" => \@patterns_files,
 
-	"i|ignore-case" => \$ignore_case, 
-	"v|invert-match" => \$invert_match, 
-	"w|word-regexp" => \$word_regexp, 
+	"i|ignore-case" => \$ignore_case,
+	"v|invert-match" => \$invert_match,
+	"w|word-regexp" => \$word_regexp,
 
 	"n|line-number" => \$line_number,
 	"H|with-filename" => sub { $with_filename = 1; },
 	"h|no-filename" => sub { $with_filename = 0; },
 
-	"A|and" => sub { $regexp_anded = 1; }, 
-	"O|or" => sub { $regexp_anded = 0; }, 
+	"A|and" => sub { $regexp_anded = 1; },
+	"O|or" => sub { $regexp_anded = 0; },
 
 	"<>" => sub {
 		push @globs, $_[0];
@@ -269,6 +269,7 @@ $break_of_para = validate_re $break_of_para, "break-of-paragraph";
 
 # =========================================================================
 
+# for debugging purposes
 warn <<DATA if $ENV{DEBUG};
 PARAGRAPH MATCHING CONTROL
     break-of-paragraph = $break_of_para
@@ -291,11 +292,11 @@ DATA
 # -- support older Perl instances (at least 5.16 and earlier)
 # -- avoid extra dependencies on other external modules
 #
-# The functions are parts of the core module List::Util since 1.33. Also 
-# they are parts of the external module List::MoreUtils for long time. 
+# The functions are parts of the core module List::Util since 1.33. Also
+# they are parts of the external module List::MoreUtils for long time.
 #
-# The implementation of the functions below were borrowed from the source 
-# code of List::MoreUtils with minimal cosmetic changes. 
+# The implementation of the functions below were borrowed from the source
+# code of List::MoreUtils with minimal cosmetic changes.
 
 sub any(&@) {
 	my $f = shift;
@@ -333,9 +334,14 @@ sub notall(&@) {
 
 my $matcher = $regexp_anded 
 	? ( $invert_match ? \&notall : \&all ) 
-	: ( $invert_match ? \&none : \&any );
+	: ( $invert_match ? \&none   : \&any );
 
+# =========================================================================
+
+# Set with filename only if @files > 1 and "-h" not specifed
 $with_filename //= 1 if @files > 1;
+
+# =========================================================================
 
 my $para;
 
@@ -343,6 +349,8 @@ sub print_para {
 	print $para if defined $para && &$matcher(sub { $para =~ $_ }, @regexps);
 	$para = "";
 }
+
+# =========================================================================
 
 $| = 1;
 
