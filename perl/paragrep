@@ -29,6 +29,10 @@ Print this help message and exit.
 
 Print the program version and exit.
 
+=item B<--debug>
+
+Print debug information and exit.
+
 =back
 
 =head2 Paragraph Matching Control
@@ -184,7 +188,9 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.6.2";
+our $VERSION = "0.6.3";
+
+my $debug;
 
 my $break_of_para = '^\\s*$';
 my $begin_of_para = 0;
@@ -212,6 +218,7 @@ pod2usage unless GetOptions(
 			-noperldoc => 1,
 		});
 	},
+	"debug" => \$debug,
 
 	"p|break-of-paragraph=s" => \$break_of_para,
 	"P|begin-of-paragraph"   => \$begin_of_para,
@@ -267,8 +274,18 @@ $break_of_para = validate_re $break_of_para, "break-of-paragraph";
 
 # =========================================================================
 
-# for debugging purposes
-warn <<DATA if $ENV{DEBUG};
+# Set with filename only if @files > 1 and "-h" not specifed
+$with_filename //= 1 if @files > 1;
+
+# =========================================================================
+
+if ( $debug ) {
+	local $" = "\n    ";
+	my $with_filename_value = $with_filename // "undef";
+	warn <<DATA;
+FILES
+    @files
+
 PARAGRAPH MATCHING CONTROL
     break-of-paragraph = $break_of_para
     begin-of-paragraph = $begin_of_para
@@ -280,9 +297,15 @@ MATCHING CONTROL
     regexp_anded  = $regexp_anded
     regexps       = @regexps
 
-FILES
-    @files
+OUTPUT CONTROL
+    line-number   = $line_number
+    with-filename = $with_filename_value
+
+MULTIPLE MATCHING CONTROL
+    regexp-anded  = $regexp_anded
 DATA
+	exit;
+}
 
 # =========================================================================
 
@@ -333,11 +356,6 @@ sub notall(&@) {
 my $matcher = $regexp_anded 
 	? ( $invert_match ? \&notall : \&all ) 
 	: ( $invert_match ? \&none   : \&any );
-
-# =========================================================================
-
-# Set with filename only if @files > 1 and "-h" not specifed
-$with_filename //= 1 if @files > 1;
 
 # =========================================================================
 
