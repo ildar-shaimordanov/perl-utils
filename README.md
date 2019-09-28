@@ -79,10 +79,11 @@ alias cgrep="paragrep -Pp '^(#@ |#-> )?\['"
 
 **Similar tools**
 
-While working on the script I found two interesting implementations of the task on Python and NodeJS. But none of them is mandatory to be installed on the systems I support. And I don't like Python. And Perl is still alive and it is flexible, powerful, richful and fast scripting language in Unix.
+While working on the script I found a lot of interesting implementations of the task on different languages. Here is a quite short excerpt of them interested me:
 
 * https://github.com/bmc/paragrep
 * https://github.com/rrnewton/paragrep
+* https://github.com/kaz-utashiro/greple
 * [Example from Perl Cookbook, Chapter 6](https://resources.oreilly.com/examples/9780596003135/blob/master/cookbook.examples/ch06/paragrep)
 
 ## `logmerge`
