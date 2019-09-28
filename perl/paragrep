@@ -83,6 +83,26 @@ are letters, digits, and the underscore.
 
 =back
 
+=head2 Output Control
+
+=over 4
+
+=item B<-n>, B<--line-number>
+
+Prefix each output line with the line number within its input file.
+
+=item B<-H>, B<--with-filename>
+
+Prefix each output line with the file name. This is the default when
+there is more than one file.
+
+=item B<-h>, B<--no-filename>
+
+Suppress the prefixing of file names on output. This is the default when
+there is the only file or only standard input.
+
+=back
+
 =head2 Multiple Matching Control
 
 =over 4
@@ -164,7 +184,7 @@ use open qw( :std :utf8 );
 use Pod::Usage;
 use Getopt::Long qw( :config no_ignore_case bundling auto_version );
 
-our $VERSION = "0.5.3";
+our $VERSION = "0.6.1";
 
 my $break_of_para = '^\\s*$';
 my $begin_of_para = 0;
@@ -172,6 +192,8 @@ my $begin_of_para = 0;
 my $ignore_case = 0;
 my $invert_match = 0;
 my $word_regexp = 0;
+my $line_number = 0;
+my $with_filename;
 my $regexp_anded = 0;
 
 my @patterns = ();
@@ -200,6 +222,10 @@ pod2usage unless GetOptions(
 	"i|ignore-case" => \$ignore_case, 
 	"v|invert-match" => \$invert_match, 
 	"w|word-regexp" => \$word_regexp, 
+
+	"n|line-number" => \$line_number,
+	"H|with-filename" => sub { $with_filename = 1; },
+	"h|no-filename" => sub { $with_filename = 0; },
 
 	"A|and" => sub { $regexp_anded = 1; }, 
 	"O|or" => sub { $regexp_anded = 0; }, 
@@ -309,6 +335,8 @@ my $matcher = $regexp_anded
 	? ( $invert_match ? \&notall : \&all ) 
 	: ( $invert_match ? \&none : \&any );
 
+$with_filename //= 1 if @files > 1;
+
 my $para;
 
 sub print_para {
@@ -319,30 +347,26 @@ sub print_para {
 $| = 1;
 
 foreach my $file ( @files ) {
-	if ( $file eq "-" ) {
-		*FILE = *STDIN;
-	} else {
-		if ( -d $file ) {
-			warn "Not a file: $file\n";
-			next;
-		}
-		open FILE, $file or do {
-			warn "Unable to read file: $file\n";
-			next;
-		};
-	}
+	open FILE, $file or do {
+		warn "Unable to read file: $file\n";
+		next;
+	};
+
+	$file = "(standard input)" if $file eq "-";
 
 	while ( <FILE> ) {
 		if ( m/$break_of_para/ ) {
 			print_para;
 			next unless $begin_of_para;
 		}
+		$_ = "$.:$_" if $line_number;
+		$_ = "$file:$_" if $with_filename;
 		$para .= $_;
 	}
 
 	print_para if $para;
 
-	close FILE unless $file eq "-";
+	close FILE;
 }
 
 # =========================================================================
