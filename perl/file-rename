@@ -19,7 +19,7 @@ command line, filenames will be read via standard input.
 
 =head1 OPTIONS
 
-=over 8
+=over 4
 
 =item B<-h>, B<--help>
 
@@ -60,7 +60,7 @@ after processing.
 To encode output in a different encoding than input was decoded, two
 comma-separated encoding names are supplied.
 
-Assuming the script is launched as below:
+Assume the script is launched as below:
 
   -T ENC1,ENC2 -e '...'
 
@@ -101,7 +101,7 @@ instead of a newline.
 Rename files cyclically. Rotation is implemented by the Perl core function
 C<rename> and is limited by a single file system.
 
-=over 8
+=over 4
 
 =item I<l> or I<rotate-left>
 
@@ -234,7 +234,7 @@ sub input {
 		chop( @ARGV = <STDIN> );
 	}
 	# globbing only when meet wildcards
-	# so win and unix works the same way
+	# so it works the same way in win and unix
 	@ARGV = map { /[*?]/ ? glob : $_ } @ARGV;
 }
 
