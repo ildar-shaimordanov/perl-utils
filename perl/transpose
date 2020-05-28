@@ -124,7 +124,7 @@ pod2usage unless GetOptions(
 	}, 
 );
 
-pod2usage({ -verbose => 2, -noperldoc => 1 }) if -t 0;
+pod2usage({ -verbose => 2, -noperldoc => 1 }) if ! @ARGV && -t 0;
 
 # =========================================================================
 
