@@ -48,7 +48,7 @@ been specified.
 
 =item B<--ltrim>, B<--rtrim>, B<--trim>
 
-Remove field separators on left, right or both sides of an input line.
+Remove field separators on left, right or both sides of an input record.
 
 =item B<-f> I<PATTERN>, B<--output-field-separator=>I<PATTERN>
 
@@ -70,7 +70,7 @@ L<http://www.perlmonks.org/?node_id=1162532>
 
 =head1 COPYRIGHT
 
-Copyright 2017 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
+Copyright 2017, 2020 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
 
 This program is free software; you can redistribute it and/or modify it 
 under the same terms as Perl itself.
@@ -146,17 +146,28 @@ $cfg{irs} = validate_re $cfg{irs}, "input-record-separator";
 my @data = ();
 my $maxcol = -1;
 
-while ( <> ) {
-	s/$cfg{irs}//;
+sub parse_rec {
+	foreach ( @_ ) {
+		s/$cfg{ifs}+$// if $cfg{rtrim};
+		s/^$cfg{ifs}+// if $cfg{ltrim};
 
-	s/$cfg{ifs}+$// if $cfg{rtrim};
-	s/^$cfg{ifs}+// if $cfg{ltrim};
+		my @row = split /$cfg{ifs}/, $_, $cfg{limit};
+		$maxcol = $#row if $#row > $maxcol;
 
-	my @row = split /$cfg{ifs}/, $_, $cfg{limit};
-	$maxcol = $#row if $#row > $maxcol;
-
-	push @data, \@row;
+		push @data, \@row;
+	}
 }
+
+my $prev_tail = "";
+
+while ( <> ) {
+	my @recs = split $cfg{irs}, "$prev_tail$_";
+	$prev_tail = pop @recs if @recs > 1;
+
+	parse_rec @recs;
+}
+
+parse_rec $prev_tail if $prev_tail;
 
 # =========================================================================
 
