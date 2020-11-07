@@ -146,9 +146,46 @@ END	{
 	if ( append ) {
 		print lines >> file;
 	} else {
-		print lines > file;
+		print lines >  file;
 	}
 }
+```
+
+or the same but more convenient in shell:
+
+```sh
+#!/usr/bin/env sh
+
+sponge() (
+	case "$1" in
+	-a | --append )
+		append=1
+		file="$2"
+		;;
+	* )
+		append=""
+		file="$1"
+		;;
+	esac
+
+	awk -v append="$append" -v file="$file" '
+# slurp a stuff and burp...
+# ... | awk -f sponge.awk [-v ORS="\r\n"] [-v append=1] [-v file=file]
+
+NR == 1	{ lines = $0 }
+NR != 1	{ lines = lines ORS $0 }
+
+END	{
+	if ( ! file ) { file = "-" }
+	if ( append ) {
+		print lines >> file;
+	} else {
+		print lines >  file;
+	}
+}'
+)
+
+sponge "$@"
 ```
 
 **Example**
