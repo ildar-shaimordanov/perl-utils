@@ -170,10 +170,9 @@ perlre(1)
 
 =head1 COPYRIGHT
 
-Copyright 2017, 2019 Ildar Shaimordanov E<lt>F<ildar.shaimordanov@gmail.com>E<gt>
+Copyright, 2017-2021 Ildar Shaimordanov
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+  MIT License
 
 =cut
 
