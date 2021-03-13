@@ -86,6 +86,8 @@ While working on the script I found a lot of interesting implementations of the 
 * [Ack](https://beyondgrep.com/)
 * [greple](https://github.com/kaz-utashiro/greple)
 * [Example from Perl Cookbook, Chapter 6](https://resources.oreilly.com/examples/9780596003135/blob/master/cookbook.examples/ch06/paragrep)
+* grep(1)
+* perlre(1)
 
 ## `logmerge`
 
