@@ -263,9 +263,11 @@ sub rename {
 $rename_mode and do {
 	input;
 
-	# Make sure the files exist
-	for ( @ARGV ) {
-		die "'$_' not found\n" unless -e $_;
+	unless ( $dry_run ) {
+		# Make sure the files exist
+		for ( @ARGV ) {
+			die "'$_' not found\n" unless -e $_;
+		}
 	}
 
 	# Create a temp filename that doesn't exist
