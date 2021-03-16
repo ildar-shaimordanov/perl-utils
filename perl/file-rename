@@ -130,7 +130,8 @@ Rename files by swapping the farthest names:
   f1 <-> fn f2 <-> fn-1 ...
 
 Difference is in the number of files supposed to be processed: the even
-number of files is required with "flip-even", otherwise the script fails.
+number of files is required with the "flip-even" option, otherwise the
+script fails.
 
 =back
 
