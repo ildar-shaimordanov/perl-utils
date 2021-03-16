@@ -301,7 +301,7 @@ $rename_mode and do {
 		die "Even number of files required\n" if @ARGV % 2;
 
 		@files = ( $tmp );
-		for ( my $i = 0; $i < @ARGV / 2; $i++ ) {
+		for ( my $i = 0; $i < @ARGV >> 1; $i++ ) {
 			push @files, $ARGV[$#ARGV - $i], $ARGV[$i], $tmp;
 		}
 	}
