@@ -123,9 +123,14 @@ Rename files by swapping the closest names:
 
 =item I<f> or I<flip>
 
+=item I<F> or I<flip-even>
+
 Rename files by swapping the farthest names:
 
   f1 <-> fn f2 <-> fn-1 ...
+
+Difference is in the number of files supposed to be processed: the even
+number of files is required with "flip-even", otherwise the script fails.
 
 =back
 
@@ -202,6 +207,7 @@ my %rename_modes = (
 	"r" => "rotate-right",
 	"s" => "swap",
 	"f" => "flip",
+	"F" => "flip-even",
 );
 
 exit 1 unless GetOptions(
@@ -297,8 +303,8 @@ $rename_mode and do {
 		for ( my $i = 1; $i < @ARGV; $i += 2 ) {
 			push @files, $ARGV[$i - 1], $ARGV[$i], $tmp;
 		}
-	} elsif ( $rename_mode eq "flip" ) {
-		die "Even number of files required\n" if @ARGV % 2;
+	} elsif ( $rename_mode =~ m/flip(-even)?/ ) {
+		die "Even number of files required\n" if $1 && @ARGV % 2;
 
 		@files = ( $tmp );
 		for ( my $i = 0; $i < @ARGV >> 1; $i++ ) {
