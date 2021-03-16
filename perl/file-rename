@@ -154,8 +154,8 @@ L<http://plasmasturm.org/code/rename/>
 
 =head1 AUTHORS
 
-This script is inspired by codes from Larry Wall and Robin Barker with
-some other ideas from perlancar and Aristotle Pagaltzis. This work is
+This script is inspired by codes by Larry Wall and Robin Barker with
+some other ideas by perlancar and Aristotle Pagaltzis. This work is
 attempt to rethink the already existing scripts, rework the code, extend
 (if it's possible) and make the usage more convenient. The last one is
 my personal vision.
