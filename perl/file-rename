@@ -75,7 +75,7 @@ the encodings C<ENC1> and C<ENC2>.
 
 Be verbose.
 
-=item B<-n>, B<--dry-run>
+=item B<-n>, B<--dry-run>, B<--check>
 
 Do nothing but print what can be done.
 
@@ -208,7 +208,7 @@ exit 1 unless GetOptions(
 	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
 
 	"v|verbose"		=> \$verbose,
-	"n|dry-run"		=> sub { $dry_run = $verbose = 1; },
+	"n|dry-run|check"	=> sub { $dry_run = $verbose = 1; },
 	"c|copy"		=> sub { $action = "copy"; },
 	"f|force"		=> \$force,
 	"N|filename-only"	=> \$filename_only,
