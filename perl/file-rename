@@ -30,8 +30,8 @@ Outputs this help page.
 The code to be executed on filenames. It uses all the power by Perl and
 supplies the mechanism for renaming files.
 
-In addition it supplies the special variable C<$NR> as a reference for
-the current line number to enable enumeration if it's necessary.
+Each input filename is numbered with C<$NR>. It can be useful when file
+numbering is required.
 
 For example:
 
@@ -136,6 +136,19 @@ script fails.
 =back
 
 =back
+
+=head1 VARIABLES
+
+The script provides the following variables to make usage more convenient.
+
+=head2 C<$NR>
+
+The number of the file to be renamed.
+
+=head2 C<$ENCODE> and C<$DECODE>
+
+Encoder and decoder respectively. Both are set as instances of the
+L<Encode> module and used to decode and encode file names.
 
 =head1 SEE ALSO
 
