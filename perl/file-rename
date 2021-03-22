@@ -240,11 +240,11 @@ exit 1 unless GetOptions(
 	"f|force"		=> \$force,
 	"N|filename-only"	=> \$filename_only,
 	"z|0|null"		=> \$null,
+	"a|count-all"		=> \$count_all,
 
 	"e|E|expr=s@"		=> \@expr,
 	"M=s@"			=> \@use,
 	"T|transcode=s"		=> \$transcode,
-	"a|count-all"		=> \$count_all,
 
 	"r|rename=s"	=> sub {
 		( $rename_mode ) = $rename_modes{ $_[1] } // grep /\Q$_[1]\E/, values %rename_modes;
