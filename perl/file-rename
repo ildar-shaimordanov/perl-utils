@@ -71,6 +71,12 @@ in fact, it works as follows:
 where C<$DECODE> and C<$ENCODE> are encoding objects corresponding to
 the encodings C<ENC1> and C<ENC2>.
 
+=item B<-a>, B<--count-all>
+
+This option makes impact on counting of input files. By default, the
+tool counts only those input files which are supposed to be renamed and
+skips others. When this option is declared, all input files are counted.
+
 =item B<-v>, B<--verbose>
 
 Be verbose.
@@ -206,6 +212,7 @@ my $die_on_error;
 
 # Current line number
 my $NR = 0;
+my $count_all;
 
 # Encoders used internally with -T
 my $DECODE;
@@ -237,6 +244,7 @@ exit 1 unless GetOptions(
 	"e|E|expr=s@"		=> \@expr,
 	"M=s@"			=> \@use,
 	"T|transcode=s"		=> \$transcode,
+	"a|count-all"		=> \$count_all,
 
 	"r|rename=s"	=> sub {
 		( $rename_mode ) = $rename_modes{ $_[1] } // grep /\Q$_[1]\E/, values %rename_modes;
@@ -386,11 +394,13 @@ for ( input ) {
 	$evaluate->();
 
 	if ( $old eq $_ ) {
+		$NR-- unless $count_all;
 		warn "'$old' not changed'\n" if $verbose;
 		next;
 	}
 
 	if ( -e $_ && ! $force ) {
+		$NR-- unless $count_all;
 		warn "'$old' not renamed: '$_' already exists\n";
 		next;
 	}
