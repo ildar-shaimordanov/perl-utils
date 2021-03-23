@@ -77,6 +77,27 @@ This option makes impact on counting of input files. By default, the
 tool counts only those input files which are supposed to be renamed and
 skips others. When this option is declared, all input files are counted.
 
+This option makes impact on the $NR variable. Consider four files C<file1>
+through C<file4> (emulated in this example).
+
+Without this option only renamed files are counted:
+
+  $ printf '%s\n' file{1..4} | file-rename 's/[34]/.$NR/' -n
+  Reading from <stdin>
+  'file1' not changed'
+  'file2' not changed'
+  move 'file3' 'file.1'
+  move 'file4' 'file.2'
+
+When C<-a> is specified, all files are counted:
+
+  $ printf '%s\n' file{1..4} | file-rename 's/[34]/.$NR/' -n -a
+  Reading from <stdin>
+  'file1' not changed'
+  'file2' not changed'
+  move 'file3' 'file.3'
+  move 'file4' 'file.4'
+
 =item B<-v>, B<--verbose>
 
 Be verbose.
