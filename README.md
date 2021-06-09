@@ -1,7 +1,8 @@
 # perl-utils
 
-## Table of Contents
-
+<!-- md-toc-begin -->
+# Table of Content
+* [perl-utils](#perl-utils)
 * [Preamble](#preamble)
 * [Paragraph processing utilities](#paragraph-processing-utilities)
   * [`paragrep`](#paragrep)
@@ -12,6 +13,7 @@
 * [File-oriented utilities](#file-oriented-utilities)
   * [`file-rename`](#file-rename)
 * [To be continued...](#to-be-continued)
+<!-- md-toc-end -->
 
 # Preamble
 
