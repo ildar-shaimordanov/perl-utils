@@ -80,22 +80,22 @@ skips others. When this option is declared, all input files are counted.
 This option makes impact on the $NR variable. Consider four files C<file1>
 through C<file4> (emulated in this example).
 
-Without this option only renamed files are counted:
+Without the option, the renamed files are counted only:
 
-  $ printf '%s\n' file{1..4} | file-rename 's/[34]/.$NR/' -n
+  $ printf '%s\n' file{1..4} | file-rename 's/[14]/.$NR/' -n
   Reading from <stdin>
-  'file1' not changed'
+  move 'file1' 'file.1'
   'file2' not changed'
-  move 'file3' 'file.1'
+  'file3' not changed'
   move 'file4' 'file.2'
 
-When C<-a> is specified, all files are counted:
+When the option is specified, all files are counted:
 
-  $ printf '%s\n' file{1..4} | file-rename 's/[34]/.$NR/' -n -a
+  $ printf '%s\n' file{1..4} | file-rename 's/[14]/.$NR/' -n -a
   Reading from <stdin>
-  'file1' not changed'
+  move 'file1' 'file.1'
   'file2' not changed'
-  move 'file3' 'file.3'
+  'file3' not changed'
   move 'file4' 'file.4'
 
 =item B<-v>, B<--verbose>
