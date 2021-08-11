@@ -379,14 +379,11 @@ for ( @use ) {
 }
 
 if ( $transcode ) {
-	my @objs;
-	for ( split /,/, $transcode, 2 ) {
-		my $obj = Encode::find_encoding($_) or die "Encoding not found: $_\n";
-		push @objs, $obj;
-	}
+	( $DECODE, $ENCODE ) = map {
+		Encode::find_encoding($_) or die "Encoding not found: $_\n";
+	} grep /./, split /,/, $transcode, 2;
 
-	( $DECODE, $ENCODE ) = @objs;
-	$ENCODE //= $DECODE;
+	$ENCODE ||= $DECODE;
 
 	push @use, 'use Encode';
 
