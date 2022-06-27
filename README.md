@@ -139,6 +139,8 @@ sponge() {
 Awk can do sponge as well:
 
 ```awk
+#!/usr/bin/awk -f
+
 # slurp a stuff and burp...
 # ... | awk -f sponge.awk [-v ORS="\r\n"] [-v append=1] [-v file=file]
 
@@ -160,6 +162,9 @@ or the same but more convenient in shell:
 ```sh
 #!/usr/bin/env sh
 
+# slurp a stuff and burp...
+# ... | awk -f sponge.awk [-v ORS="\r\n"] [-v append=1] [-v file=file]
+
 sponge() (
 	case "$1" in
 	-a | --append )
@@ -173,9 +178,6 @@ sponge() (
 	esac
 
 	awk -v append="$append" -v file="$file" '
-# slurp a stuff and burp...
-# ... | awk -f sponge.awk [-v ORS="\r\n"] [-v append=1] [-v file=file]
-
 NR == 1	{ lines = $0 }
 NR != 1	{ lines = lines ORS $0 }
 
