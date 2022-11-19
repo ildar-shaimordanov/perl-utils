@@ -69,13 +69,13 @@ Later I decided to implement it as the standalone script adding more functionali
 Each log entry in log files usually begins with the timestamp in the generalized numeric form *date time*, which can be covered by the pattern without reflecting on which date format has been used to output dates:
 
 ```bash
-paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
+paragrep -Pp '^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+' PATTERN FILENAME
 ```
 
 Also the aliases for parsing log files and INI-like configuration files:
 
 ```bash
-alias lgrep="paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+'"
+alias lgrep="paragrep -Pp '^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+'"
 alias cgrep="paragrep -Pp '^(#@ |#-> )?\['"
 ```
 

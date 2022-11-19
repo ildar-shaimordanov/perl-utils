@@ -1,0 +1,11 @@
+# paragrep
+
+Output control
+
+--color={never|always|auto}
+
+Context control
+
+-B, --before-context=NUMBER
+-A, --after-context=NUMBER
+-C, --context=NUMBER

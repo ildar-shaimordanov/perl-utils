@@ -133,11 +133,11 @@ The following example demonstrates the customized paragraph definition
 for parsing log files. Usually, applications producing log files write
 one log entry per one line. Somethimes applications (especially written
 in Java) produce multiline log entries. Each log entry begins with the
-timestamp in the generalized form C<date time>, which can be covered by
-the pattern C<\d+/\d+/\d+ \d+:\d+:\d+> without reflecting on which date
-format has been used to output dates:
+timestamp in the generalized form C<date time>, which can be covered
+by the pattern C<^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+> without reflecting on
+which date format has been used to output dates:
 
-    paragrep -Pp '^\d+/\d+/\d+ \d+:\d+:\d+' PATTERN FILENAME
+    paragrep -Pp '^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+' PATTERN FILENAME
 
 =head2 Example
 
@@ -180,7 +180,7 @@ perlre(1)
 
 =head1 COPYRIGHT
 
-Copyright 2017-2021, Ildar Shaimordanov
+Copyright 2017-2022, Ildar Shaimordanov
 
   MIT License
 
