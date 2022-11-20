@@ -1,1 +1,7 @@
-../../paragrep -Pp '^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+' ERROR log-example.log
+#!/bin/sh
+
+lgrep() {
+	paragrep -Pp '^\d+[/-]\d+[/-]\d+ \d+:\d+:\d+' "$@"
+}
+
+lgrep ERROR log-example.log
