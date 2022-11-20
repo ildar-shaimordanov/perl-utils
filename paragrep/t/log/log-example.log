@@ -1,0 +1,19 @@
+02/02/2015 12:54:24.173 CET main (02.021.01) INFORMATIVE: ==== t3o_FileServer Starting ==== 
+02/02/2015 12:54:24.176 CET main (02.021.02) INFORMATIVE: Operating System Name: HP-UX
+02/02/2015 12:54:24.176 CET main (02.021.03) INFORMATIVE: Operating System Version: B.11.23
+02/02/2015 12:54:24.176 CET main (02.021.04) INFORMATIVE: Operating System Architecture: IA64N
+02/02/2015 12:55:04.441 CET T3OF (WorkflowJobNotifier) ERROR: Unable to finish processing the file /bm72/work/t3o/T3OF/Input/T3OR.TAP3_NORC4_20150119130000.20150202130200.000002
+com.hp.usage.workflow.WorkflowException: Unable to finish task SourceFileArchiving
+	at com.hp.usage.workflow.WorkflowEngineImpl.execute(Unknown Source)
+	at com.hp.usage.workflow.WorkflowEngineImpl.process(Unknown Source)
+	at com.hp.usage.workflow.WorkflowEngineImpl.process(Unknown Source)
+	at com.hp.usage.workflow.fcs.WorkflowJobNotifier.process(Unknown Source)
+	at com.hp.usage.workflow.fcs.WorkflowJobNotifier.processWorkflowInstance(Unknown Source)
+	at com.hp.usage.workflow.fcs.WorkflowJobNotifier.addJob(Unknown Source)
+	at com.hp.siu.jobmanagementservice.jobcollection.JobCollectionService.addJob(Unknown Source)
+	at com.hp.siu.fileservice.FileCollector.processNewFile(Unknown Source)
+	at com.hp.siu.fileservice.FileCollector.execute(Unknown Source)
+	at com.hp.siu.jobmanagementservice.jobcollection.JobCollector.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:680)
+
+02/02/2015 13:03:04.441 CET T3OF (105.010.36) INFORMATIVE: Attempting to stop job collector JC_Workflow configured to collect from source T3OF

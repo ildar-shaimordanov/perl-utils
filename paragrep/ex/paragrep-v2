@@ -1,0 +1,9 @@
+paragrep() {
+	perl -ne '
+	( m/$break_of_para/ or eof ) and do {
+		print $para if defined $para && $para =~ /$regexp/;
+		$para = "";
+	};
+	$para .= $_;
+	' -s -- -break_of_para="$1" -regexp="$2" "${@:3}"
+}
