@@ -371,7 +371,9 @@ my $matcher = $regexp_anded
 my $para;
 
 sub print_para {
-	print $para if defined $para && &$matcher(sub { $para =~ $_ }, @regexps);
+	print $para
+		if defined $para
+		&& &$matcher(sub { $para =~ $_ }, @regexps);
 	$para = "";
 }
 
@@ -385,10 +387,11 @@ foreach my $file ( @files ) {
 		next;
 	};
 
-	$file = "(standard input)" if $file eq "-";
+	$file = "(standard input)"
+		if $file eq "-";
 
 	while ( <FILE> ) {
-		if ( m/$break_of_para/ ) {
+		if ( m/$break_of_para/ || eof ) {
 			print_para;
 			next unless $begin_of_para;
 		}
@@ -396,8 +399,6 @@ foreach my $file ( @files ) {
 		$_ = "$file:$_" if $with_filename;
 		$para .= $_;
 	}
-
-	print_para if $para;
 
 	close FILE;
 }
