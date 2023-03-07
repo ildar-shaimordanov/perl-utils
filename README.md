@@ -160,10 +160,10 @@ END	{
 or the same but more convenient in shell:
 
 ```sh
-#!/usr/bin/env sh
+#!/bin/sh
 
 # slurp a stuff and burp...
-# ... | awk -f sponge.awk [-v ORS="\r\n"] [-v append=1] [-v file=file]
+# ... | sponge.awk [-a] file
 
 sponge() (
 	case "$1" in
