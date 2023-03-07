@@ -163,7 +163,7 @@ or the same but more convenient in shell:
 #!/bin/sh
 
 # slurp a stuff and burp...
-# ... | sponge.awk [-a] file
+# ... | sponge [-a] file
 
 sponge() (
 	case "$1" in
