@@ -205,7 +205,7 @@ Ildar Shaimordanov
 
 =head1 COPYRIGHT
 
-Copyright 2019-2021, Ildar Shaimordanov
+Copyright 2019-2023, Ildar Shaimordanov
 
   MIT License
 
@@ -253,10 +253,12 @@ my %rename_modes = (
 );
 
 exit 1 unless GetOptions(
-	"h|help"		=> sub { pod2usage({ -verbose => 2, -noperldoc => 1 }); },
-
+	"h|help"		=> sub {
+		pod2usage({ -verbose => 2, -noperldoc => 1 });
+	},
 	"v|verbose"		=> \$verbose,
 	"n|dry-run|check"	=> sub { $dry_run = $verbose = 1; },
+
 	"c|copy"		=> sub { $action = "copy"; },
 	"f|force"		=> \$force,
 	"N|filename-only"	=> \$filename_only,
@@ -267,9 +269,10 @@ exit 1 unless GetOptions(
 	"M=s@"			=> \@use,
 	"T|transcode=s"		=> \$transcode,
 
-	"r|rename=s"	=> sub {
-		( $rename_mode ) = $rename_modes{ $_[1] } // grep /\Q$_[1]\E/, values %rename_modes;
-		die "Bad rename mode: $_[1]\n" unless $rename_mode;
+	"r|rename=s"		=> sub {
+		( $rename_mode ) = $rename_modes{ $_[1] }
+		|| grep /^\Q$_[1]\E$/, values %rename_modes
+		or die "Bad rename mode: $_[1]\n";
 	},
 );
 
@@ -326,6 +329,10 @@ $rename_mode and do {
 		last unless -e $tmp;
 	}
 
+	sub die_unless_even {
+		die "Even number of files required\n" if @ARGV % 2;
+	}
+
 	# Prepare replacement list
 	# rotate left  : tmp f1 f2 ... fn-1 fn tmp
 	# rotate right : tmp fn fn-1 ... f2 f1 tmp
@@ -340,14 +347,14 @@ $rename_mode and do {
 	} elsif ( $rename_mode eq "rotate-right" ) {
 		@files = ( $tmp, reverse(@ARGV), $tmp );
 	} elsif ( $rename_mode eq "swap" ) {
-		die "Even number of files required\n" if @ARGV % 2;
+		die_unless_even;
 
 		@files = ( $tmp );
 		for ( my $i = 1; $i < @ARGV; $i += 2 ) {
 			push @files, $ARGV[$i - 1], $ARGV[$i], $tmp;
 		}
 	} elsif ( $rename_mode =~ m/flip(-even)?/ ) {
-		die "Even number of files required\n" if $1 && @ARGV % 2;
+		die_unless_even if $1;
 
 		@files = ( $tmp );
 		for ( my $i = 0; $i < @ARGV >> 1; $i++ ) {
